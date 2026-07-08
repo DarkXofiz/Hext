@@ -1,4 +1,4 @@
-package thunder.hack.gui.clickui;
+package hext.gui.clickui;
 
 import net.minecraft.client.gui.DrawContext;
 
