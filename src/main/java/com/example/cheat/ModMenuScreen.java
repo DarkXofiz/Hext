@@ -2,61 +2,26 @@ package com.example.cheat;
 
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.SliderWidget;
 import net.minecraft.text.Text;
 
 public class ModMenuScreen extends Screen {
     public ModMenuScreen() {
-        super(Text.literal("§bHext Client Menu"));
+        super(Text.literal("Hext Client Menu"));
     }
 
     @Override
     protected void init() {
-        int y = 40;
-        int width = 200;
-
-        // Killaura
-        addDrawableChild(ButtonWidget.builder(Text.literal("Killaura: " + (CheatModClient.killaura ? "ON" : "OFF")), btn -> {
-            CheatModClient.killaura = !CheatModClient.killaura;
-            btn.setMessage(Text.literal("Killaura: " + (CheatModClient.killaura ? "ON" : "OFF")));
-        }).dimensions(50, y, width, 20).build());
+        int y = 50;
+        addDrawableChild(ButtonWidget.builder(Text.literal("Killaura: " + (CheatModClient.killaura ? "ON" : "OFF")), b -> CheatModClient.killaura = !CheatModClient.killaura).dimensions(50, y, 200, 20).build());
         y += 30;
-
-        // Range Slider
-        addDrawableChild(new SliderWidget(50, y, width, 20, Text.literal("Range: " + String.format("%.1f", CheatModClient.killauraRange)), (CheatModClient.killauraRange - 3.0) / 5.0) {
-            @Override
-            protected void updateMessage() {
-                CheatModClient.killauraRange = 3.0 + value * 5.0;
-                setMessage(Text.literal("Killaura Range: " + String.format("%.1f", CheatModClient.killauraRange)));
-            }
-            @Override
-            protected void applyValue() {}
-        });
-        y += 35;
-
-        // Speed Toggle
-        addDrawableChild(ButtonWidget.builder(Text.literal("Speed: " + (CheatModClient.speed ? "ON" : "OFF")), btn -> {
-            CheatModClient.speed = !CheatModClient.speed;
-            btn.setMessage(Text.literal("Speed: " + (CheatModClient.speed ? "ON" : "OFF")));
-        }).dimensions(50, y, width, 20).build());
+        addDrawableChild(ButtonWidget.builder(Text.literal("Speed: " + (CheatModClient.speed ? "ON" : "OFF")), b -> CheatModClient.speed = !CheatModClient.speed).dimensions(50, y, 200, 20).build());
         y += 30;
-
-        // Speed Slider
-        addDrawableChild(new SliderWidget(50, y, width, 20, Text.literal("Speed x" + String.format("%.1f", CheatModClient.speedMultiplier)), (CheatModClient.speedMultiplier - 1.0) / 2.0) {
-            @Override
-            protected void updateMessage() {
-                CheatModClient.speedMultiplier = 1.0 + value * 2.0;
-                setMessage(Text.literal("Speed x" + String.format("%.1f", CheatModClient.speedMultiplier)));
-            }
-            @Override
-            protected void applyValue() {}
-        });
-        y += 35;
-
-        // ESP Toggle (daha fazla buton ekleyebilirsin)
-        addDrawableChild(ButtonWidget.builder(Text.literal("ESP: " + (CheatModClient.esp ? "ON" : "OFF")), btn -> {
-            CheatModClient.esp = !CheatModClient.esp;
-            btn.setMessage(Text.literal("ESP: " + (CheatModClient.esp ? "ON" : "OFF")));
-        }).dimensions(50, y, width, 20).build());
+        addDrawableChild(ButtonWidget.builder(Text.literal("ESP: " + (CheatModClient.esp ? "ON" : "OFF")), b -> CheatModClient.esp = !CheatModClient.esp).dimensions(50, y, 200, 20).build());
+        y += 30;
+        addDrawableChild(ButtonWidget.builder(Text.literal("Hitbox: " + (CheatModClient.hitbox ? "ON" : "OFF")), b -> CheatModClient.hitbox = !CheatModClient.hitbox).dimensions(50, y, 200, 20).build());
+        y += 30;
+        addDrawableChild(ButtonWidget.builder(Text.literal("SpeedMine: " + (CheatModClient.speedmine ? "ON" : "OFF")), b -> CheatModClient.speedmine = !CheatModClient.speedmine).dimensions(50, y, 200, 20).build());
+        y += 30;
+        addDrawableChild(ButtonWidget.builder(Text.literal("XRay: " + (CheatModClient.xray ? "ON" : "OFF")), b -> CheatModClient.xray = !CheatModClient.xray).dimensions(50, y, 200, 20).build());
     }
 }
