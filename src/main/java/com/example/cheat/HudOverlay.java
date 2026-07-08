@@ -2,37 +2,51 @@ package com.example.cheat;
 
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.util.math.BlockPos;
 
 public class HudOverlay {
-
     public static void register() {
-        HudRenderCallback.EVENT.register(HudOverlay::onHudRender);
-    }
+        HudRenderCallback.EVENT.register((drawContext, tickDelta) -> {
+            MinecraftClient client = MinecraftClient.getInstance();
+            TextRenderer renderer = client.textRenderer;
+            int x = 5;
+            int y = 5;
 
-    private static void onHudRender(DrawContext context, net.minecraft.client.render.RenderTickCounter tickCounter) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        if (client.player == null) return;
+            // Hext Başlığı
+            renderer.draw(drawContext, "§b§lHext Client", x, y, 0xFFFFFF);
+            y += 12;
 
-        int x = 6;
-        int y = 6;
-        int lineHeight = 10;
+            // FPS
+            renderer.draw(drawContext, "FPS: §a" + client.getFpsDebugString().split(" ")[0], x, y, 0x00FF00);
+            y += 12;
 
-        if (HudState.showCoords) {
-            BlockPos pos = client.player.getBlockPos();
-            String coordText = String.format("XYZ: %d / %d / %d", pos.getX(), pos.getY(), pos.getZ());
-            context.drawTextWithShadow(client.textRenderer, coordText, x, y, 0xFFFFFF);
-            y += lineHeight;
-        }
+            // Aktif Hileler
+            if (CheatModClient.killaura) {
+                renderer.draw(drawContext, "§cKillaura", x, y, 0xFF0000);
+                y += 10;
+            }
+            if (CheatModClient.speed) {
+                renderer.draw(drawContext, "§aSpeed: " + CheatModClient.speedMultiplier + "x", x, y, 0x00FF00);
+                y += 10;
+            }
+            if (CheatModClient.xray) {
+                renderer.draw(drawContext, "§eX-Ray", x, y, 0xFFFF00);
+                y += 10;
+            }
+            if (CheatModClient.esp) {
+                renderer.draw(drawContext, "§dESP", x, y, 0xFF00FF);
+                y += 10;
+            }
+            if (CheatModClient.hitbox) {
+                renderer.draw(drawContext, "§6Hitbox", x, y, 0xFFAA00);
+                y += 10;
+            }
+            if (CheatModClient.speedmine) {
+                renderer.draw(drawContext, "§bSpeedMine: " + CheatModClient.speedmineSpeed + "x", x, y, 0x00AAFF);
+            }
 
-        if (HudState.flyEnabled) {
-            context.drawTextWithShadow(client.textRenderer, "Fly: ON", x, y, 0x55FF55);
-            y += lineHeight;
-        }
-
-        if (HudState.zoomEnabled) {
-            context.drawTextWithShadow(client.textRenderer, "Zoom: ON", x, y, 0x55FFFF);
-        }
+            // ESP/Hitbox render (box'lar için ekstra kod lazım)
+        });
     }
 }
