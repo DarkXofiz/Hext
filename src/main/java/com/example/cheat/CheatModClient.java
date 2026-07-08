@@ -15,15 +15,15 @@ public class CheatModClient implements ClientModInitializer {
     public static boolean killaura = false;
     public static boolean esp = false;
     public static boolean hitbox = false;
+    public static double hitboxScale = 1.0; // Hitbox ayar
     public static boolean speed = false;
+    public static double speedMultiplier = 1.5;
     public static boolean speedmine = false;
     public static boolean xray = false;
 
     @Override
     public void onInitializeClient() {
-        menuKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-            "key.hext.menu", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_M, "category.hext"
-        ));
+        menuKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.hext.menu", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_M, "category.hext"));
 
         HudOverlay.register();
 
@@ -32,7 +32,6 @@ public class CheatModClient implements ClientModInitializer {
                 client.setScreen(new ModMenuScreen());
             }
 
-            // Killaura
             if (killaura && client.player != null && client.world != null) {
                 for (Entity e : client.world.getEntities()) {
                     if (e instanceof PlayerEntity p && p != client.player && client.player.distanceTo(p) < 5) {
@@ -41,9 +40,8 @@ public class CheatModClient implements ClientModInitializer {
                 }
             }
 
-            // Speed
             if (speed && client.player != null) {
-                client.player.setVelocity(client.player.getVelocity().multiply(1.8));
+                client.player.setVelocity(client.player.getVelocity().multiply(speedMultiplier));
             }
         });
     }
