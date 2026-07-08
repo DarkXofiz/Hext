@@ -3,22 +3,30 @@ package com.example.cheat;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
 import org.lwjgl.glfw.GLFW;
 
 public class CheatModClient implements ClientModInitializer {
     private static KeyBinding menuKey;
 
+    // Ayarlanabilir Hileler
     public static boolean killaura = false;
-    public static boolean xray = false;
+    public static double killauraRange = 5.0; // Ayar
+
     public static boolean esp = false;
     public static boolean hitbox = false;
+    public static double hitboxScale = 1.0; // Hitbox boyutu ayarı
+
     public static boolean speed = false;
-    public static double speedMultiplier = 1.5; // Ayarlanabilir
+    public static double speedMultiplier = 1.5; // Hız ayarı
+
     public static boolean speedmine = false;
-    public static float speedmineSpeed = 2.0f; // Ayarlanabilir
+    public static float speedmineSpeed = 2.0f; // Maden hızı ayarı
+
+    public static boolean xray = false;
 
     @Override
     public void onInitializeClient() {
@@ -35,10 +43,10 @@ public class CheatModClient implements ClientModInitializer {
                 }
             }
 
-            // Killaura
+            // Killaura (ayarlı range)
             if (killaura && client.player != null && client.world != null) {
-                for (var e : client.world.getEntities()) {
-                    if (e instanceof net.minecraft.entity.player.PlayerEntity p && p != client.player && client.player.distanceTo(p) < 5) {
+                for (Entity e : client.world.getEntities()) {
+                    if (e instanceof PlayerEntity p && p != client.player && client.player.distanceTo(p) < killauraRange) {
                         client.interactionManager.attackEntity(client.player, p);
                     }
                 }
@@ -49,8 +57,6 @@ public class CheatModClient implements ClientModInitializer {
                 var vel = client.player.getVelocity();
                 client.player.setVelocity(vel.multiply(speedMultiplier));
             }
-
-            // HUD her tick güncellenir
         });
     }
 }
