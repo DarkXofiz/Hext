@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "Hext",
+  "id": "hext",
   "version": "${version}",
   "name": "Hext",
   "description": "Experimental cheat mod for own server: Fly, XRay, Killaura basics",
