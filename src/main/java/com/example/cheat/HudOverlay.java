@@ -26,11 +26,6 @@ public class HudOverlay {
             y += lineHeight;
         }
 
-        if (HudState.flyEnabled) {
-            context.drawTextWithShadow(client.textRenderer, "Fly: ON", x, y, 0x55FF55);
-            y += lineHeight;
-        }
-
         if (HudState.zoomEnabled) {
             context.drawTextWithShadow(client.textRenderer, "Zoom: ON", x, y, 0x55FFFF);
         }
