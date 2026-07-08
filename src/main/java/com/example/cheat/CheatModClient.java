@@ -13,7 +13,7 @@ public class CheatModClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         menuKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-            "key.mc-cheat-mod.menu", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_M, "category.mc-cheat-mod"
+            "key.Hext.menu", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_M, "category.mc-cheat-mod"
         ));
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
