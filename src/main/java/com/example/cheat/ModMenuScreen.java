@@ -7,66 +7,56 @@ import net.minecraft.text.Text;
 
 public class ModMenuScreen extends Screen {
     public ModMenuScreen() {
-        super(Text.literal("ExClient Menu - Tüm Hileler"));
+        super(Text.literal("§bHext Client Menu"));
     }
 
     @Override
     protected void init() {
-        int y = 50;
+        int y = 40;
+        int width = 200;
 
         // Killaura
-        addDrawableChild(ButtonWidget.builder(Text.literal("Killaura: " + (CheatModClient.killaura ? "ON" : "OFF")), button -> {
+        addDrawableChild(ButtonWidget.builder(Text.literal("Killaura: " + (CheatModClient.killaura ? "ON" : "OFF")), btn -> {
             CheatModClient.killaura = !CheatModClient.killaura;
-            button.setMessage(Text.literal("Killaura: " + (CheatModClient.killaura ? "ON" : "OFF")));
-        }).dimensions(50, y, 200, 20).build());
+            btn.setMessage(Text.literal("Killaura: " + (CheatModClient.killaura ? "ON" : "OFF")));
+        }).dimensions(50, y, width, 20).build());
         y += 30;
 
-        // Killaura Range Slider
-        addDrawableChild(new SliderWidget(50, y, 200, 20, Text.literal("Range: " + CheatModClient.killauraRange), (CheatModClient.killauraRange - 3) / 5) {
+        // Range Slider
+        addDrawableChild(new SliderWidget(50, y, width, 20, Text.literal("Range: " + String.format("%.1f", CheatModClient.killauraRange)), (CheatModClient.killauraRange - 3.0) / 5.0) {
             @Override
             protected void updateMessage() {
-                CheatModClient.killauraRange = 3 + value * 5;
+                CheatModClient.killauraRange = 3.0 + value * 5.0;
                 setMessage(Text.literal("Killaura Range: " + String.format("%.1f", CheatModClient.killauraRange)));
             }
+            @Override
+            protected void applyValue() {}
         });
-        y += 40;
+        y += 35;
 
-        // Speed
-        addDrawableChild(ButtonWidget.builder(Text.literal("Speed: " + (CheatModClient.speed ? "ON" : "OFF")), button -> {
+        // Speed Toggle
+        addDrawableChild(ButtonWidget.builder(Text.literal("Speed: " + (CheatModClient.speed ? "ON" : "OFF")), btn -> {
             CheatModClient.speed = !CheatModClient.speed;
-            button.setMessage(Text.literal("Speed: " + (CheatModClient.speed ? "ON" : "OFF")));
-        }).dimensions(50, y, 200, 20).build());
+            btn.setMessage(Text.literal("Speed: " + (CheatModClient.speed ? "ON" : "OFF")));
+        }).dimensions(50, y, width, 20).build());
         y += 30;
 
-        // Speed Multi Slider
-        addDrawableChild(new SliderWidget(50, y, 200, 20, Text.literal("Speed: " + CheatModClient.speedMultiplier), (CheatModClient.speedMultiplier - 1) / 2) {
+        // Speed Slider
+        addDrawableChild(new SliderWidget(50, y, width, 20, Text.literal("Speed x" + String.format("%.1f", CheatModClient.speedMultiplier)), (CheatModClient.speedMultiplier - 1.0) / 2.0) {
             @Override
             protected void updateMessage() {
-                CheatModClient.speedMultiplier = 1 + value * 2;
+                CheatModClient.speedMultiplier = 1.0 + value * 2.0;
                 setMessage(Text.literal("Speed x" + String.format("%.1f", CheatModClient.speedMultiplier)));
             }
-        });
-        y += 40;
-
-        // ESP, Hitbox, XRay, Speedmine benzer buton + slider ekle (aynı şekilde)
-
-        // Örnek ESP
-        addDrawableChild(ButtonWidget.builder(Text.literal("ESP: " + (CheatModClient.esp ? "ON" : "OFF")), button -> {
-            CheatModClient.esp = !CheatModClient.esp;
-            button.setMessage(Text.literal("ESP: " + (CheatModClient.esp ? "ON" : "OFF")));
-        }).dimensions(50, y, 200, 20).build());
-        y += 30;
-
-        // Hitbox Scale
-        addDrawableChild(new SliderWidget(50, y, 200, 20, Text.literal("Hitbox Scale"), CheatModClient.hitboxScale / 2) {
             @Override
-            protected void updateMessage() {
-                CheatModClient.hitboxScale = value * 2;
-                setMessage(Text.literal("Hitbox Scale: " + String.format("%.1f", CheatModClient.hitboxScale)));
-            }
+            protected void applyValue() {}
         });
+        y += 35;
 
-        // Diğer hileler (XRay, Speedmine) aynı mantıkla ekle
+        // ESP Toggle (daha fazla buton ekleyebilirsin)
+        addDrawableChild(ButtonWidget.builder(Text.literal("ESP: " + (CheatModClient.esp ? "ON" : "OFF")), btn -> {
+            CheatModClient.esp = !CheatModClient.esp;
+            btn.setMessage(Text.literal("ESP: " + (CheatModClient.esp ? "ON" : "OFF")));
+        }).dimensions(50, y, width, 20).build());
     }
 }
-
