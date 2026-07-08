@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "mc-cheat-mod",
+  "version": "${version}",
+  "name": "MC Cheat Mod",
+  "description": "Experimental cheat mod for own server: Fly, XRay, Killaura basics",
+  "authors": [
+    "YourName"
+  ],
+  "contact": {
+    "homepage": "https://github.com/",
+    "sources": "https://github.com/"
+  },
+  "license": "MIT",
+  "icon": "assets/mc-cheat-mod/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "main": [
+      "com.example.cheat.CheatMod"
+    ],
+    "client": [
+      "com.example.cheat.CheatModClient"
+    ]
+  },
+  "mixins": [
+    "mc-cheat-mod.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "minecraft": "~1.21.1",
+    "java": ">=21"
+  }
+}
