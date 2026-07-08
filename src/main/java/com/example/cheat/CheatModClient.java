@@ -12,21 +12,15 @@ import org.lwjgl.glfw.GLFW;
 public class CheatModClient implements ClientModInitializer {
     private static KeyBinding menuKey;
 
-    // Hile ayarları (önceki kodlardan)
     public static boolean killaura = false;
-    public static double killauraRange = 5.0;
     public static boolean esp = false;
     public static boolean hitbox = false;
-    public static double hitboxScale = 1.0;
     public static boolean speed = false;
-    public static double speedMultiplier = 1.5;
     public static boolean speedmine = false;
-    public static float speedmineSpeed = 2.0f;
     public static boolean xray = false;
 
     @Override
     public void onInitializeClient() {
-        // M tuşu
         menuKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
             "key.hext.menu", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_M, "category.hext"
         ));
@@ -35,15 +29,13 @@ public class CheatModClient implements ClientModInitializer {
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (menuKey.wasPressed()) {
-                if (client.currentScreen == null) {
-                    client.setScreen(new ModMenuScreen()); // M bas → Tek menü açılır
-                }
+                client.setScreen(new ModMenuScreen());
             }
 
-            // Killaura (M menüsünden ayarlı)
+            // Killaura
             if (killaura && client.player != null && client.world != null) {
                 for (Entity e : client.world.getEntities()) {
-                    if (e instanceof PlayerEntity p && p != client.player && client.player.distanceTo(p) < killauraRange) {
+                    if (e instanceof PlayerEntity p && p != client.player && client.player.distanceTo(p) < 5) {
                         client.interactionManager.attackEntity(client.player, p);
                     }
                 }
@@ -51,8 +43,7 @@ public class CheatModClient implements ClientModInitializer {
 
             // Speed
             if (speed && client.player != null) {
-                var vel = client.player.getVelocity();
-                client.player.setVelocity(vel.multiply(speedMultiplier));
+                client.player.setVelocity(client.player.getVelocity().multiply(1.8));
             }
         });
     }
