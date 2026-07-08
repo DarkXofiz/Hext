@@ -11,7 +11,7 @@ import java.util.List;
 
 public class ModMenuScreen extends Screen {
 
-    private enum Category { VISUAL, MOVEMENT }
+    private enum Category { VISUAL, MOVEMENT, COMBAT }
     private Category currentCategory = Category.VISUAL;
 
     private String expandedRow = null;
@@ -37,8 +37,15 @@ public class ModMenuScreen extends Screen {
         if (cat == Category.VISUAL) {
             rows.add(new Row("coords", "Coordinate HUD", true, false));
             rows.add(new Row("zoom", "Zoom", true, false));
-        } else {
+            rows.add(new Row("esp", "ESP", true, false));
+            rows.add(new Row("hitbox", "Hitbox", true, true)); // Ayarlanabilir
+            rows.add(new Row("xray", "X-Ray", true, false));
+        } else if (cat == Category.MOVEMENT) {
             rows.add(new Row("fly", "Fly", true, true));
+            rows.add(new Row("speed", "Speed", true, true));
+            rows.add(new Row("speedmine", "SpeedMine", true, false));
+        } else { // COMBAT
+            rows.add(new Row("killaura", "Killaura", true, true));
         }
         return rows;
     }
@@ -50,6 +57,7 @@ public class ModMenuScreen extends Screen {
 
         addSidebarButton(panelX, panelY, "G", Category.VISUAL);
         addSidebarButton(panelX, panelY + 46, "H", Category.MOVEMENT);
+        addSidebarButton(panelX, panelY + 92, "C", Category.COMBAT);
 
         int listX = panelX + SIDEBAR_WIDTH;
         int listWidth = PANEL_WIDTH - SIDEBAR_WIDTH;
@@ -60,110 +68,53 @@ public class ModMenuScreen extends Screen {
             rowY += ROW_HEIGHT + 6;
 
             if (row.hasDetail() && row.id().equals(expandedRow)) {
-                addFlySpeedSlider(listX + 10, rowY, listWidth - 20);
+                if (row.id().equals("hitbox")) {
+                    addHitboxSlider(listX + 10, rowY, listWidth - 20);
+                } else if (row.id().equals("speed")) {
+                    addSpeedSlider(listX + 10, rowY, listWidth - 20);
+                } else if (row.id().equals("killaura")) {
+                    // Killaura range slider eklenebilir
+                }
                 rowY += ROW_HEIGHT + 6;
             }
         }
     }
 
-    private void addSidebarButton(int x, int y, String icon, Category cat) {
-        boolean active = currentCategory == cat;
-        this.addDrawableChild(ButtonWidget.builder(
-                Text.literal(active ? "§d§l" + icon : "§7" + icon),
-                b -> { currentCategory = cat; expandedRow = null; rebuild(); })
-                .dimensions(x + 8, y + 6, SIDEBAR_WIDTH - 16, 30)
-                .build());
-    }
+    // ... (mevcut addSidebarButton, addRow, getToggleState, toggleRow, addFlySpeedSlider methodlarını koru)
 
-    private void addRow(int x, int y, int width, Row row) {
-        boolean on = getToggleState(row.id());
-        String rightText = row.hasToggle() ? (on ? "§d●" : "§8○") : "›";
-
-        this.addDrawableChild(ButtonWidget.builder(
-                Text.literal(row.label() + "   " + rightText),
-                button -> {
-                    if (row.hasDetail()) {
-                        expandedRow = expandedRow != null && expandedRow.equals(row.id()) ? null : row.id();
-                    }
-                    toggleRow(row.id());
-                    rebuild();
-                })
-                .dimensions(x, y, width, ROW_HEIGHT)
-                .build());
-    }
-
-    private boolean getToggleState(String id) {
-        return switch (id) {
-            case "coords" -> HudState.showCoords;
-            case "zoom" -> HudState.zoomEnabled;
-            case "fly" -> HudState.flyEnabled;
-            default -> false;
-        };
-    }
-
-    private void toggleRow(String id) {
-        switch (id) {
-            case "coords" -> HudState.showCoords = !HudState.showCoords;
-            case "zoom" -> HudState.zoomEnabled = !HudState.zoomEnabled;
-            case "fly" -> {
-                HudState.flyEnabled = !HudState.flyEnabled;
-                if (this.client != null && this.client.player != null) {
-                    this.client.player.getAbilities().flying = HudState.flyEnabled;
-                    this.client.player.getAbilities().allowFlying = HudState.flyEnabled;
-                    this.client.player.sendAbilitiesUpdate();
-                }
-            }
-        }
-    }
-
-    private void addFlySpeedSlider(int x, int y, int width) {
-        double normalized = (HudState.flySpeed - 0.05) / (1.0 - 0.05);
-        this.addDrawableChild(new SliderWidget(x, y, width, 18,
-                Text.literal("Hız: " + String.format("%.2f", HudState.flySpeed)), normalized) {
+    private void addHitboxSlider(int x, int y, int width) {
+        double normalized = CheatModClient.hitboxScale / 2.0;
+        this.addDrawableChild(new SliderWidget(x, y, width, 18, Text.literal("Hitbox Scale: " + String.format("%.1f", CheatModClient.hitboxScale)), normalized) {
             @Override
             protected void updateMessage() {
-                HudState.flySpeed = 0.05 + value * (1.0 - 0.05);
-                setMessage(Text.literal("Hız: " + String.format("%.2f", HudState.flySpeed)));
+                CheatModClient.hitboxScale = value * 2.0;
+                setMessage(Text.literal("Hitbox Scale: " + String.format("%.1f", CheatModClient.hitboxScale)));
             }
-
             @Override
-            protected void applyValue() {
-                if (client != null && client.player != null) {
-                    client.player.getAbilities().setFlySpeed((float) HudState.flySpeed);
-                    client.player.sendAbilitiesUpdate();
-                }
-            }
+            protected void applyValue() {}
         });
     }
 
-    private void rebuild() {
-        this.clearChildren();
-        this.init();
+    private void addSpeedSlider(int x, int y, int width) {
+        double normalized = (CheatModClient.speedMultiplier - 1.0) / 2.0;
+        this.addDrawableChild(new SliderWidget(x, y, width, 18, Text.literal("Speed: " + String.format("%.1f", CheatModClient.speedMultiplier)), normalized) {
+            @Override
+            protected void updateMessage() {
+                CheatModClient.speedMultiplier = 1.0 + value * 2.0;
+                setMessage(Text.literal("Speed: " + String.format("%.1f", CheatModClient.speedMultiplier)));
+            }
+            @Override
+            protected void applyValue() {}
+        });
     }
 
-    @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        this.renderBackground(context, mouseX, mouseY, delta);
+    // toggleRow metoduna yeni case'ler ekle:
+    // case "esp" -> CheatModClient.esp = !CheatModClient.esp;
+    // case "hitbox" -> CheatModClient.hitbox = !CheatModClient.hitbox;
+    // case "speed" -> CheatModClient.speed = !CheatModClient.speed;
+    // case "speedmine" -> CheatModClient.speedmine = !CheatModClient.speedmine;
+    // case "xray" -> CheatModClient.xray = !CheatModClient.xray;
+    // case "killaura" -> CheatModClient.killaura = !CheatModClient.killaura;
 
-        int panelX = this.width / 2 - PANEL_WIDTH / 2;
-        int panelY = this.height / 2 - PANEL_HEIGHT / 2;
-
-        context.fill(panelX, panelY, panelX + PANEL_WIDTH, panelY + PANEL_HEIGHT, COLOR_BG);
-        context.drawBorder(panelX, panelY, PANEL_WIDTH, PANEL_HEIGHT, COLOR_BORDER);
-
-        context.fill(panelX, panelY, panelX + SIDEBAR_WIDTH, panelY + PANEL_HEIGHT, COLOR_SIDEBAR);
-
-        String title = currentCategory == Category.VISUAL ? "Görsel" : "Hareket";
-        context.drawTextWithShadow(this.textRenderer, "§l" + title,
-                panelX + SIDEBAR_WIDTH + 8, panelY + 10, 0xFFFFFF);
-
-        context.drawTextWithShadow(this.textRenderer, "§d§lHEXT", panelX + 8, panelY - 12, 0xFFFFFF);
-
-        super.render(context, mouseX, mouseY, delta);
-    }
-
-    @Override
-    public boolean shouldPause() {
-        return false;
-    }
-                              }
+    // getToggleState'e de ekle
+}
