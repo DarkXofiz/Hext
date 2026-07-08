@@ -38,13 +38,13 @@ public class ModMenuScreen extends Screen {
             rows.add(new Row("coords", "Coordinate HUD", true, false));
             rows.add(new Row("zoom", "Zoom", true, false));
             rows.add(new Row("esp", "ESP", true, false));
-            rows.add(new Row("hitbox", "Hitbox", true, true)); // Ayarlanabilir
+            rows.add(new Row("hitbox", "Hitbox", true, true));
             rows.add(new Row("xray", "X-Ray", true, false));
         } else if (cat == Category.MOVEMENT) {
             rows.add(new Row("fly", "Fly", true, true));
             rows.add(new Row("speed", "Speed", true, true));
             rows.add(new Row("speedmine", "SpeedMine", true, false));
-        } else { // COMBAT
+        } else if (cat == Category.COMBAT) {
             rows.add(new Row("killaura", "Killaura", true, true));
         }
         return rows;
@@ -72,15 +72,72 @@ public class ModMenuScreen extends Screen {
                     addHitboxSlider(listX + 10, rowY, listWidth - 20);
                 } else if (row.id().equals("speed")) {
                     addSpeedSlider(listX + 10, rowY, listWidth - 20);
-                } else if (row.id().equals("killaura")) {
-                    // Killaura range slider eklenebilir
                 }
                 rowY += ROW_HEIGHT + 6;
             }
         }
     }
 
-    // ... (mevcut addSidebarButton, addRow, getToggleState, toggleRow, addFlySpeedSlider methodlarını koru)
+    private void addSidebarButton(int x, int y, String icon, Category cat) {
+        boolean active = currentCategory == cat;
+        this.addDrawableChild(ButtonWidget.builder(
+                Text.literal(active ? "§d§l" + icon : "§7" + icon),
+                b -> { currentCategory = cat; expandedRow = null; rebuild(); })
+                .dimensions(x + 8, y + 6, SIDEBAR_WIDTH - 16, 30)
+                .build());
+    }
+
+    private void addRow(int x, int y, int width, Row row) {
+        boolean on = getToggleState(row.id());
+        String rightText = row.hasToggle() ? (on ? "§d●" : "§8○") : "›";
+
+        this.addDrawableChild(ButtonWidget.builder(
+                Text.literal(row.label() + "   " + rightText),
+                button -> {
+                    if (row.hasDetail()) {
+                        expandedRow = expandedRow != null && expandedRow.equals(row.id()) ? null : row.id();
+                    }
+                    toggleRow(row.id());
+                    rebuild();
+                })
+                .dimensions(x, y, width, ROW_HEIGHT)
+                .build());
+    }
+
+    private boolean getToggleState(String id) {
+        return switch (id) {
+            case "coords" -> HudState.showCoords;
+            case "zoom" -> HudState.zoomEnabled;
+            case "fly" -> HudState.flyEnabled;
+            case "esp" -> CheatModClient.esp;
+            case "hitbox" -> CheatModClient.hitbox;
+            case "xray" -> CheatModClient.xray;
+            case "speed" -> CheatModClient.speed;
+            case "speedmine" -> CheatModClient.speedmine;
+            case "killaura" -> CheatModClient.killaura;
+            default -> false;
+        };
+    }
+
+    private void toggleRow(String id) {
+        switch (id) {
+            case "coords" -> HudState.showCoords = !HudState.showCoords;
+            case "zoom" -> HudState.zoomEnabled = !HudState.zoomEnabled;
+            case "fly" -> {
+                HudState.flyEnabled = !HudState.flyEnabled;
+                if (this.client != null && this.client.player != null) {
+                    this.client.player.getAbilities().flying = HudState.flyEnabled;
+                    this.client.player.getAbilities().allowFlying = HudState.flyEnabled;
+                }
+            }
+            case "esp" -> CheatModClient.esp = !CheatModClient.esp;
+            case "hitbox" -> CheatModClient.hitbox = !CheatModClient.hitbox;
+            case "xray" -> CheatModClient.xray = !CheatModClient.xray;
+            case "speed" -> CheatModClient.speed = !CheatModClient.speed;
+            case "speedmine" -> CheatModClient.speedmine = !CheatModClient.speedmine;
+            case "killaura" -> CheatModClient.killaura = !CheatModClient.killaura;
+        }
+    }
 
     private void addHitboxSlider(int x, int y, int width) {
         double normalized = CheatModClient.hitboxScale / 2.0;
@@ -108,13 +165,37 @@ public class ModMenuScreen extends Screen {
         });
     }
 
-    // toggleRow metoduna yeni case'ler ekle:
-    // case "esp" -> CheatModClient.esp = !CheatModClient.esp;
-    // case "hitbox" -> CheatModClient.hitbox = !CheatModClient.hitbox;
-    // case "speed" -> CheatModClient.speed = !CheatModClient.speed;
-    // case "speedmine" -> CheatModClient.speedmine = !CheatModClient.speedmine;
-    // case "xray" -> CheatModClient.xray = !CheatModClient.xray;
-    // case "killaura" -> CheatModClient.killaura = !CheatModClient.killaura;
+    private void rebuild() {
+        this.clearChildren();
+        this.init();
+    }
 
-    // getToggleState'e de ekle
+    @Override
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        this.renderBackground(context, mouseX, mouseY, delta);
+
+        int panelX = this.width / 2 - PANEL_WIDTH / 2;
+        int panelY = this.height / 2 - PANEL_HEIGHT / 2;
+
+        context.fill(panelX, panelY, panelX + PANEL_WIDTH, panelY + PANEL_HEIGHT, COLOR_BG);
+        context.drawBorder(panelX, panelY, PANEL_WIDTH, PANEL_HEIGHT, COLOR_BORDER);
+
+        context.fill(panelX, panelY, panelX + SIDEBAR_WIDTH, panelY + PANEL_HEIGHT, COLOR_SIDEBAR);
+
+        String title = switch (currentCategory) {
+            case VISUAL -> "Görsel";
+            case MOVEMENT -> "Hareket";
+            case COMBAT -> "Savaş";
+        };
+        context.drawTextWithShadow(this.textRenderer, "§l" + title, panelX + SIDEBAR_WIDTH + 8, panelY + 10, 0xFFFFFF);
+
+        context.drawTextWithShadow(this.textRenderer, "§d§lHEXT", panelX + 8, panelY - 12, 0xFFFFFF);
+
+        super.render(context, mouseX, mouseY, delta);
+    }
+
+    @Override
+    public boolean shouldPause() {
+        return false;
+    }
 }
