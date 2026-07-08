@@ -13,16 +13,18 @@ public class CheatModClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         menuKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-            "key.Hext.menu", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_M, "category.mc-cheat-mod"
+            "key.hext.menu",
+            InputUtil.Type.KEYSYM,
+            GLFW.GLFW_KEY_RIGHT_SHIFT,
+            "category.hext"
         ));
+
+        HudOverlay.register();
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (menuKey.wasPressed()) {
-                // TODO: Open GUI menu here (use ImGui or simple screen)
-                System.out.println("M tuşu basıldı! Menu açılıyor... Aura, Fly, XRay toggle et.");
-                // Example: Toggle fly
-                if (client.player != null) {
-                    client.player.getAbilities().flying = !client.player.getAbilities().flying;
+                if (client.currentScreen == null) {
+                    client.setScreen(new ModMenuScreen());
                 }
             }
         });
