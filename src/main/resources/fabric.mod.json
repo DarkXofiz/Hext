@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "mc-cheat-mod",
   "version": "${version}",
-  "name": "MC Cheat Mod",
+  "name": "Hext",
   "description": "Experimental cheat mod for own server: Fly, XRay, Killaura basics",
   "authors": [
     "YourName"
