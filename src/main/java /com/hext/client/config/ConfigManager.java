@@ -1,8 +1,8 @@
-package com.hextclient.client.config;
+package com.hext.client.config;
 
-import com.hextclient.client.HextClient;
-import com.hextclient.client.module.Module;
-import com.hextclient.client.module.setting.*;
+import com.hext.client.Hext;
+import com.hext.client.module.Module;
+import com.hext.client.module.setting.*;
 import com.google.gson.*;
 import net.fabricmc.loader.api.FabricLoader;
 
@@ -15,16 +15,16 @@ public class ConfigManager {
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     public ConfigManager() {
-        configPath = FabricLoader.getInstance().getConfigDir().resolve("hextclient.json");
+        configPath = FabricLoader.getInstance().getConfigDir().resolve("hext.json");
     }
 
     public void save() {
         JsonObject root = new JsonObject();
         // Theme
-        root.addProperty("theme", HextClient.getInstance().getThemeManager().getCurrentTheme());
+        root.addProperty("theme", Hext.getInstance().getThemeManager().getCurrentTheme());
 
         JsonObject modules = new JsonObject();
-        for (Module mod : HextClient.getInstance().getModuleManager().getModules()) {
+        for (Module mod : Hext.getInstance().getModuleManager().getModules()) {
             JsonObject modObj = new JsonObject();
             modObj.addProperty("enabled", mod.isEnabled());
             modObj.addProperty("keybind", mod.getKeybind());
@@ -44,7 +44,7 @@ public class ConfigManager {
         try (Writer w = Files.newBufferedWriter(configPath)) {
             gson.toJson(root, w);
         } catch (IOException e) {
-            HextClient.LOGGER.error("Failed to save config", e);
+            Hext.LOGGER.error("Failed to save config", e);
         }
     }
 
@@ -54,12 +54,12 @@ public class ConfigManager {
             JsonObject root = JsonParser.parseReader(r).getAsJsonObject();
 
             if (root.has("theme"))
-                HextClient.getInstance().getThemeManager().setTheme(root.get("theme").getAsString());
+                Hext.getInstance().getThemeManager().setTheme(root.get("theme").getAsString());
 
             if (!root.has("modules")) return;
             JsonObject modules = root.getAsJsonObject("modules");
 
-            for (Module mod : HextClient.getInstance().getModuleManager().getModules()) {
+            for (Module mod : Hext.getInstance().getModuleManager().getModules()) {
                 if (!modules.has(mod.getName())) continue;
                 JsonObject modObj = modules.getAsJsonObject(mod.getName());
 
@@ -82,7 +82,7 @@ public class ConfigManager {
                 }
             }
         } catch (IOException | JsonParseException e) {
-            HextClient.LOGGER.error("Failed to load config", e);
+            Hext.LOGGER.error("Failed to load config", e);
         }
     }
 }
