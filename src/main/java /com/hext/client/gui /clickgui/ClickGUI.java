@@ -1,11 +1,11 @@
-package com.hextclient.client.gui.clickgui;
+package com.hext.client.gui.clickgui;
 
-import com.hextclient.client.HextClient;
-import com.hextclient.client.gui.theme.ThemeManager;
-import com.hextclient.client.module.Module;
-import com.hextclient.client.module.category.Category;
-import com.hextclient.client.module.setting.*;
-import com.hextclient.client.util.RenderUtil;
+import com.hext.client.Hext;
+import com.hext.client.gui.theme.ThemeManager;
+import com.hext.client.module.Module;
+import com.hext.client.module.category.Category;
+import com.hext.client.module.setting.*;
+import com.hext.client.util.RenderUtil;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -69,7 +69,7 @@ public class ClickGUI extends Screen {
 
     @Override
     public void render(DrawContext ctx, int mouseX, int mouseY, float delta) {
-        ThemeManager theme = HextClient.getInstance().getThemeManager();
+        ThemeManager theme = Hext.getInstance().getThemeManager();
 
         // Dim background
         ctx.fill(0, 0, width, height, 0x88000000);
@@ -86,7 +86,7 @@ public class ClickGUI extends Screen {
     }
 
     private void drawWatermark(DrawContext ctx, ThemeManager theme) {
-        String wm = HextClient.NAME + " v" + HextClient.VERSION;
+        String wm = Hext.NAME + " v" + Hext.VERSION;
         int tx = width / 2 - textRenderer.getWidth(wm) / 2;
         RenderUtil.drawRoundedRect(ctx, tx - 6, 4, textRenderer.getWidth(wm) + 12, 16, 4, theme.bgSecondary);
         ctx.drawTextWithShadow(textRenderer, wm, tx, 8, theme.accentPrimary);
@@ -95,7 +95,7 @@ public class ClickGUI extends Screen {
     private void renderPanel(DrawContext ctx, Category cat, int mouseX, int mouseY, float delta, ThemeManager theme) {
         int[] pos = panelPositions.get(cat);
         int px = pos[0], py = pos[1];
-        List<Module> mods = HextClient.getInstance().getModuleManager().getModulesByCategory(cat);
+        List<Module> mods = Hext.getInstance().getModuleManager().getModulesByCategory(cat);
         boolean isCollapsed = collapsed.getOrDefault(cat, false);
 
         int totalH = PANEL_HEADER;
@@ -223,7 +223,7 @@ public class ClickGUI extends Screen {
 
             if (collapsed.getOrDefault(cat, false)) continue;
 
-            List<Module> mods = HextClient.getInstance().getModuleManager().getModulesByCategory(cat);
+            List<Module> mods = Hext.getInstance().getModuleManager().getModulesByCategory(cat);
             int ry = py + PANEL_HEADER;
             for (Module mod : mods) {
                 if (isHovering(mx, my, px, ry, PANEL_WIDTH, MODULE_HEIGHT)) {
