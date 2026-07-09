@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
-  "id": "hextclient",
-  "version": "${version}",
-  "name": "HextClient",
+  "id": "hext",
+  "version": "1.21x",
+  "name": "Hext",
   "description": "A modern, professional Minecraft utility client for Fabric 1.21.1",
-  "authors": ["HextClient Team"],
+  "authors": ["Hext Team"],
   "contact": {
-    "homepage": "https://github.com/hextclient"
+    "homepage": "https://github.com/hext"
   },
   "license": "MIT",
-  "icon": "assets/hextclient/icon.png",
+  "icon": "assets/hext/icon.png",
   "environment": "client",
   "entrypoints": {
     "client": [
-      "com.hextclient.client.HextClient"
+      "com.hext.client.Hext"
     ]
   },
   "mixins": [
-    "hextclient.mixins.json"
+    "hext.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=0.15.0",
