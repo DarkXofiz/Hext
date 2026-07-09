@@ -1,8 +1,8 @@
-package com.hextclient.client.command.impl;
+package com.hext.client.command.impl;
 
-import com.hextclient.client.HextClient;
-import com.hextclient.client.command.Command;
-import com.hextclient.client.command.CommandManager;
+import com.hext.client.Hext;
+import com.hext.client.command.Command;
+import com.hext.client.command.CommandManager;
 
 public class ThemeCommand extends Command {
 
@@ -17,7 +17,7 @@ public class ThemeCommand extends Command {
             return;
         }
         String theme = args[0];
-        HextClient.getInstance().getThemeManager().setTheme(theme);
+        Hext.getInstance().getThemeManager().setTheme(theme);
         CommandManager.sendMessage("\u00A75Tema \u00A7a" + theme + "\u00A75 olarak ayarlandı.");
     }
 }
