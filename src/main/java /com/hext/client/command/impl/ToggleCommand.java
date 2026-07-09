@@ -1,9 +1,9 @@
-package com.hextclient.client.command.impl;
+package com.hext.client.command.impl;
 
-import com.hextclient.client.HextClient;
-import com.hextclient.client.command.Command;
-import com.hextclient.client.command.CommandManager;
-import com.hextclient.client.module.Module;
+import com.hext.client.Hext;
+import com.hext.client.command.Command;
+import com.hext.client.command.CommandManager;
+import com.hext.client.module.Module;
 
 import java.util.Optional;
 
