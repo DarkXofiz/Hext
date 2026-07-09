@@ -1,6 +1,6 @@
-package com.hextclient.client.command;
+package com.hext.client.command;
 
-import com.hextclient.client.command.impl.*;
+import com.hext.client.command.impl.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 
