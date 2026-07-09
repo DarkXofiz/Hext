@@ -1,0 +1,20 @@
+{
+  "hextclient.name": "HextClient",
+  "hextclient.gui.title": "HextClient Menüsü",
+  "hextclient.category.combat": "Dövüş",
+  "hextclient.category.movement": "Hareket",
+  "hextclient.category.render": "Görsel",
+  "hextclient.category.player": "Oyuncu",
+  "hextclient.category.misc": "Diğer",
+  "hextclient.module.hitbox": "Hitbox",
+  "hextclient.module.reach": "Menzil",
+  "hextclient.module.togglesprint": "Sprint Kilidi",
+  "hextclient.module.autosprint": "Otomatik Sprint",
+  "hextclient.module.freelook": "Özgür Bakış",
+  "hextclient.module.autojump": "Otomatik Zıplama",
+  "hextclient.module.keystrokes": "Tuş Göstergesi",
+  "hextclient.module.armorstatus": "Zırh Durumu",
+  "hextclient.module.fullbright": "Tam Parlaklık",
+  "hextclient.module.nohurtcam": "Hasar Kamera Kapatma",
+  "hextclient.module.nametags": "İsim Etiketleri"
+}
