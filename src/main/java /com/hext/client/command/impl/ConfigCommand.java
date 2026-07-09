@@ -22,7 +22,7 @@ public class ConfigCommand extends Command {
                 CommandManager.sendMessage("\u00A7aKonfig kaydedildi.");
             }
             case "load" -> {
-                HextClient.getInstance().getConfigManager().load();
+                Hext.getInstance().getConfigManager().load();
                 CommandManager.sendMessage("\u00A7aKonfig yüklendi.");
             }
             default -> CommandManager.sendMessage("\u00A7cGeçersiz eylem: " + args[0]);
