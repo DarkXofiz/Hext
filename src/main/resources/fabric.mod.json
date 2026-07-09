@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "darkclient",
+  "version": "${version}",
+  "name": "DarkClient",
+  "description": "A modern, professional Minecraft utility client for Fabric 1.21.1",
+  "authors": ["DarkClient Team"],
+  "contact": {
+    "homepage": "https://github.com/darkclient"
+  },
+  "license": "MIT",
+  "icon": "assets/darkclient/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "com.darkclient.client.DarkClient"
+    ]
+  },
+  "mixins": [
+    "darkclient.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.15.0",
+    "fabric-api": "*",
+    "minecraft": "~1.21.1",
+    "java": ">=21"
+  }
+}
