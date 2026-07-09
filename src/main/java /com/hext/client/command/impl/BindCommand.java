@@ -23,7 +23,7 @@ public class BindCommand extends Command {
         }
         String modName = args[0];
         String keyName = args[1].toUpperCase();
-        Optional<Module> opt = HextClient.getInstance().getModuleManager().getModule(modName);
+        Optional<Module> opt = Hext.getInstance().getModuleManager().getModule(modName);
         if (opt.isEmpty()) {
             CommandManager.sendMessage("\u00A7cModül bulunamadı: " + modName);
             return;
