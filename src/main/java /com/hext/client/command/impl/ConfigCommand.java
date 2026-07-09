@@ -1,8 +1,8 @@
-package com.hextclient.client.command.impl;
+package com.hext.client.command.impl;
 
-import com.hextclient.client.HextClient;
-import com.hextclient.client.command.Command;
-import com.hextclient.client.command.CommandManager;
+import com.hext.client.HextClient;
+import com.hext.client.command.Command;
+import com.hext.client.command.CommandManager;
 
 public class ConfigCommand extends Command {
 
