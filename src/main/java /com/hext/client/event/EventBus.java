@@ -1,4 +1,4 @@
-package com.hextclient.client.event;
+package com.hext.client.event;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
