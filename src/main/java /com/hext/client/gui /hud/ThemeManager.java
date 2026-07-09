@@ -1,4 +1,4 @@
-package com.hextclient.client.gui.theme;
+package com.hext.client.gui.theme;
 
 public class ThemeManager {
 
