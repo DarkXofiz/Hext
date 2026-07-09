@@ -1,8 +1,8 @@
-package com.hextclient.client.command.impl;
+package com.hext.client.command.impl;
 
-import com.hextclient.client.HextClient;
-import com.hextclient.client.command.Command;
-import com.hextclient.client.command.CommandManager;
+import com.hext.client.HextClient;
+import com.hext.client.command.Command;
+import com.hext.client.command.CommandManager;
 
 public class HelpCommand extends Command {
 
@@ -12,7 +12,7 @@ public class HelpCommand extends Command {
 
     @Override
     public void execute(String[] args) {
-        CommandManager.sendMessage("\u00A75\u00A7l=== HextClient Commands ===");
+        CommandManager.sendMessage("\u00A75\u00A7l=== Hext Commands ===");
         HextClient.getInstance().getCommandManager().getCommands().forEach(cmd ->
             CommandManager.sendMessage("\u00A75." + cmd.getName() + "\u00A77 - " + cmd.getDescription())
         );
