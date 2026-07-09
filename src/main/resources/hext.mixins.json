@@ -1,20 +1,10 @@
 {
-  "required": true,
+  "required": false,
   "minVersion": "0.8",
   "package": "com.hext.mixin",
   "compatibilityLevel": "JAVA_21",
-  "client": [
-    "GameRendererMixin",
-    "EntityRendererMixin",
-    "ClientPlayerEntityMixin",
-    "MouseMixin",
-    "GameOptionsMixin",
-    "InGameHudMixin",
-    "PlayerEntityMixin",
-    "ClientPlayNetworkHandlerMixin",
-    "WorldRendererMixin"
-  ],
+  "client": [],
   "injectors": {
-    "defaultRequire": 1
+    "defaultRequire": 0
   }
 }
