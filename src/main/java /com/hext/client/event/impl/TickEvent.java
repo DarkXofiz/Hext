@@ -1,4 +1,4 @@
-package com.hextclient.client.event.impl;
+package com.hext.client.event.impl;
 
 import net.minecraft.client.MinecraftClient;
 
