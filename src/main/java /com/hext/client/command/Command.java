@@ -1,4 +1,4 @@
-package com.hextclient.client.command;
+package com.hext.client.command;
 
 public abstract class Command {
     private final String name;
