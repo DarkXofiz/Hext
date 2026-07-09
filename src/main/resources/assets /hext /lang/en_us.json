@@ -1,0 +1,20 @@
+{
+  "darkclient.name": "DarkClient",
+  "darkclient.gui.title": "DarkClient ClickGUI",
+  "darkclient.category.combat": "Combat",
+  "darkclient.category.movement": "Movement",
+  "darkclient.category.render": "Render",
+  "darkclient.category.player": "Player",
+  "darkclient.category.misc": "Misc",
+  "darkclient.module.hitbox": "Hitbox",
+  "darkclient.module.reach": "Reach",
+  "darkclient.module.togglesprint": "ToggleSprint",
+  "darkclient.module.autosprint": "AutoSprint",
+  "darkclient.module.freelook": "FreeLook",
+  "darkclient.module.autojump": "AutoJump",
+  "darkclient.module.keystrokes": "Keystrokes",
+  "darkclient.module.armorstatus": "ArmorStatus",
+  "darkclient.module.fullbright": "Fullbright",
+  "darkclient.module.nohurtcam": "NoHurtCam",
+  "darkclient.module.nametags": "NameTags"
+}
