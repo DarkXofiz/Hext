@@ -1,6 +1,6 @@
 package com.hext.client.command.impl;
 
-import com.hext.client.HextClient;
+import com.hext.client.Hext;
 import com.hext.client.command.Command;
 import com.hext.client.command.CommandManager;
 
