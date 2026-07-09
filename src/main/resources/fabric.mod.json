@@ -12,7 +12,7 @@
   "environment": "client",
   "entrypoints": {
     "client": [
-      "com.hextclient.client.HextClient"
+      "com.hext.client.Hext"
     ]
   },
   "mixins": [
