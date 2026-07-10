@@ -1,7 +1,7 @@
-package com.hextclient.mixin;
+package com.hext.mixin;
 
-import com.hextclient.client.HextClient;
-import com.hextclient.client.module.impl.combat.Hitbox;
+import com.hext.client.Hext;
+import com.hext.client.module.impl.combat.Hitbox;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.Box;
 import org.spongepowered.asm.mixin.Mixin;
