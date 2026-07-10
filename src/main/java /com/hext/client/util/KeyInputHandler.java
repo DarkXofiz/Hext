@@ -1,6 +1,6 @@
-package com.hextclient.client.util;
+package com.hext.client.util;
 
-import com.hextclient.client.HextClient;
+import com.hext.client.HextClient;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.MinecraftClient;
 import org.lwjgl.glfw.GLFW;
@@ -14,7 +14,7 @@ public class KeyInputHandler {
     }
 
     private void onTick(MinecraftClient client) {
-        if (client.currentScreen != null && !(client.currentScreen instanceof com.hextclient.client.gui.clickgui.ClickGUI)) {
+        if (client.currentScreen != null && !(client.currentScreen instanceof com.hext.client.gui.clickgui.ClickGUI)) {
             xWasPressed = false;
             return;
         }
@@ -23,13 +23,13 @@ public class KeyInputHandler {
         boolean xPressed = GLFW.glfwGetKey(handle, GLFW.GLFW_KEY_X) == GLFW.GLFW_PRESS;
 
         if (xPressed && !xWasPressed && client.currentScreen == null) {
-            HextClient.getInstance().getClickGUI().open();
+            Hext.getInstance().getClickGUI().open();
         }
         xWasPressed = xPressed;
 
         // Module keybinds
         if (client.currentScreen == null) {
-            HextClient.getInstance().getModuleManager().onKeyPress(getCurrentKey(handle));
+            Hext.getInstance().getModuleManager().onKeyPress(getCurrentKey(handle));
         }
     }
 
