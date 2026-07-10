@@ -1,4 +1,4 @@
-package com.hextclient.client.module.category;
+package com.hext.client.module.category;
 
 public enum Category {
     COMBAT("Combat", "\u2694"),
