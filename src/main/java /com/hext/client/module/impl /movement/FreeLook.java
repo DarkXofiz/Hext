@@ -1,8 +1,8 @@
-package com.hextclient.client.module.impl.movement;
+package com.hext.client.module.impl.movement;
 
-import com.hextclient.client.module.Module;
-import com.hextclient.client.module.category.Category;
-import com.hextclient.client.module.setting.ModeSetting;
+import com.hext.client.module.Module;
+import com.hext.client.module.category.Category;
+import com.hext.client.module.setting.ModeSetting;
 import net.minecraft.client.MinecraftClient;
 
 public class FreeLook extends Module {
