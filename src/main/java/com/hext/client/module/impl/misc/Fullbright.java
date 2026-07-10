@@ -36,7 +36,8 @@ public class Fullbright extends Module {
 
     @Override
     public void onTick(MinecraftClient client) {
-        if (client.options != null && client.options.getGamma().getValue() < brightness.getValue()) {
+        if (!isEnabled()) return;
+        if (client.options != null) {
             client.options.getGamma().setValue(brightness.getValue());
         }
     }
