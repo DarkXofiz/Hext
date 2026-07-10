@@ -1,4 +1,4 @@
-package com.hextclient.client.module.setting;
+package com.hext.client.module.setting;
 
 public class SliderSetting extends Setting<Double> {
     private final double min;
