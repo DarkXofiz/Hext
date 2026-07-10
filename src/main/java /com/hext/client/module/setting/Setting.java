@@ -1,4 +1,4 @@
-package com.hextclient.client.module.setting;
+package com.hext.client.module.setting;
 
 public abstract class Setting<T> {
     private final String name;
