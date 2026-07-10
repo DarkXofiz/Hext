@@ -1,8 +1,8 @@
-package com.hextclient.client.module.impl.combat;
+package com.hext.client.module.impl.combat;
 
-import com.hextclient.client.module.Module;
-import com.hextclient.client.module.category.Category;
-import com.hextclient.client.module.setting.SliderSetting;
+import com.hext.client.module.Module;
+import com.hext.client.module.category.Category;
+import com.hext.client.module.setting.SliderSetting;
 import net.minecraft.client.MinecraftClient;
 
 public class Hitbox extends Module {
