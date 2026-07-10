@@ -1,7 +1,7 @@
-package com.hextclient.mixin;
+package com.hext.mixin;
 
-import com.hextclient.client.HextClient;
-import com.hextclient.client.module.impl.misc.NoHurtCam;
+import com.hext.client.Hext;
+import com.hext.client.module.impl.misc.NoHurtCam;
 import net.minecraft.client.render.GameRenderer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
