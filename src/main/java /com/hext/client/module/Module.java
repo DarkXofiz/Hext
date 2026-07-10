@@ -1,7 +1,7 @@
-package com.hextclient.client.module;
+package com.hext.client.module;
 
-import com.hextclient.client.module.category.Category;
-import com.hextclient.client.module.setting.Setting;
+import com.hext.client.module.category.Category;
+import com.hext.client.module.setting.Setting;
 import net.minecraft.client.MinecraftClient;
 import org.lwjgl.glfw.GLFW;
 
