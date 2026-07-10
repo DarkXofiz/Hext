@@ -1,9 +1,9 @@
-package com.hextclient.client.module.impl.player;
+package com.hext.client.module.impl.player;
 
-import com.hextclient.client.module.Module;
-import com.hextclient.client.module.category.Category;
-import com.hextclient.client.module.setting.BooleanSetting;
-import com.hextclient.client.module.setting.ModeSetting;
+import com.hext.client.module.Module;
+import com.hext.client.module.category.Category;
+import com.hext.client.module.setting.BooleanSetting;
+import com.hext.client.module.setting.ModeSetting;
 
 public class ArmorStatus extends Module {
 
