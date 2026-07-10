@@ -1,4 +1,4 @@
-package com.hextclient.mixin;
+package com.hext.mixin;
 
 import net.minecraft.client.render.WorldRenderer;
 import org.spongepowered.asm.mixin.Mixin;
