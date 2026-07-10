@@ -3,21 +3,18 @@ package com.hext.client.module.impl.combat;
 import com.hext.client.module.Module;
 import com.hext.client.module.category.Category;
 import com.hext.client.module.setting.SliderSetting;
+import net.minecraft.entity.Entity;
+import net.minecraft.util.math.Box;
 
-public class Hitbox extends Module {
+public class HitBox extends Module {
 
     private final SliderSetting size = addSetting(new SliderSetting(
-            "Size", "Hitbox genişletme miktarı", 0.1, 0.0, 1.0, 0.01
+            "Size", "Hitbox büyütme", 0.2, 0.0, 2.0, 0.05
     ));
 
-    private final SliderSetting height = addSetting(new SliderSetting(
-            "Height", "Hitbox yükseklik artışı", 0.1, 0.0, 1.0, 0.01
-    ));
-
-    public Hitbox() {
-        super("Hitbox", "Entity hitbox'larını büyütür", Category.COMBAT);
+    public HitBox() {
+        super("HitBox", "Entity hitboxlarını büyütür", Category.COMBAT);
     }
 
     public double getSize() { return size.getValue(); }
-    public double getHeight() { return height.getValue(); }
 }
