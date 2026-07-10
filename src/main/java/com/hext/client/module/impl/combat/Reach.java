@@ -1,24 +1,22 @@
-package com.hext.client.module.impl.combat;
+package com.hext.mixin;
 
-import com.hext.client.module.Module;
-import com.hext.client.module.category.Category;
-import com.hext.client.module.setting.BooleanSetting;
-import com.hext.client.module.setting.SliderSetting;
+import com.hext.client.Hext;
+import com.hext.client.module.impl.combat.Reach;
+import net.minecraft.client.network.ClientPlayerInteractionManager;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-public class Reach extends Module {
+@Mixin(ClientPlayerInteractionManager.class)
+public class ReachMixin {
 
-    private final SliderSetting distance = addSetting(new SliderSetting(
-            "Distance", "Erişim mesafesi (blok)", 3.0, 3.0, 6.0, 0.1
-    ));
-
-    private final BooleanSetting showIndicator = addSetting(new BooleanSetting(
-            "Show Indicator", "HUD'da mesafeyi göster", true
-    ));
-
-    public Reach() {
-        super("Reach", "Saldırı menzilini HUD'da gösterir", Category.COMBAT);
+    @Inject(method = "getReachDistance", at = @At("RETURN"), cancellable = true)
+    private void onGetReachDistance(CallbackInfoReturnable<Float> cir) {
+        Reach mod = Hext.getInstance().getModuleManager()
+                .getModule(Reach.class).orElse(null);
+        if (mod != null && mod.isEnabled()) {
+            cir.setReturnValue((float) mod.getDistance());
+        }
     }
-
-    public double getDistance() { return distance.getValue(); }
-    public boolean shouldShowIndicator() { return showIndicator.getValue(); }
 }
