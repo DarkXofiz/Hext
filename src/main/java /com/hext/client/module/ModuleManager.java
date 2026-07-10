@@ -1,16 +1,16 @@
-package com.hextclient.client.module;
+package com.hext.client.module;
 
-import com.hextclient.client.module.impl.combat.Hitbox;
-import com.hextclient.client.module.impl.combat.Reach;
-import com.hextclient.client.module.impl.misc.AutoJump;
-import com.hextclient.client.module.impl.misc.Fullbright;
-import com.hextclient.client.module.impl.misc.NameTags;
-import com.hextclient.client.module.impl.misc.NoHurtCam;
-import com.hextclient.client.module.impl.movement.AutoSprint;
-import com.hextclient.client.module.impl.movement.FreeLook;
-import com.hextclient.client.module.impl.movement.ToggleSprint;
-import com.hextclient.client.module.impl.player.ArmorStatus;
-import com.hextclient.client.module.impl.render.Keystrokes;
+import com.hext.client.module.impl.combat.Hitbox;
+import com.hext.client.module.impl.combat.Reach;
+import com.hext.client.module.impl.misc.AutoJump;
+import com.hext.client.module.impl.misc.Fullbright;
+import com.hext.client.module.impl.misc.NameTags;
+import com.hext.client.module.impl.misc.NoHurtCam;
+import com.hext.client.module.impl.movement.AutoSprint;
+import com.hext.client.module.impl.movement.FreeLook;
+import com.hext.client.module.impl.movement.ToggleSprint;
+import com.hext.client.module.impl.player.ArmorStatus;
+import com.hext.client.module.impl.render.Keystrokes;
 import net.minecraft.client.MinecraftClient;
 import org.lwjgl.glfw.GLFW;
 
@@ -78,7 +78,7 @@ public class ModuleManager {
 
     public List<Module> getModules() { return Collections.unmodifiableList(modules); }
 
-    public List<Module> getModulesByCategory(com.hextclient.client.module.category.Category category) {
+    public List<Module> getModulesByCategory(com.hext.client.module.category.Category category) {
         return modules.stream()
                 .filter(m -> m.getCategory() == category)
                 .sorted(Comparator.comparing(Module::getName))
