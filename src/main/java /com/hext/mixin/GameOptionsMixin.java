@@ -1,7 +1,7 @@
-package com.hextclient.mixin;
+package com.hext.mixin;
 
-import com.hextclient.client.HextClient;
-import com.hextclient.client.gui.clickgui.ClickGUI;
+import com.hext.client.Hext;
+import com.hext.client.gui.clickgui.ClickGUI;
 import net.minecraft.client.option.GameOptions;
 import org.lwjgl.glfw.GLFW;
 import org.spongepowered.asm.mixin.Mixin;
