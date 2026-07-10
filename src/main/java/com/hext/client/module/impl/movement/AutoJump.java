@@ -13,12 +13,12 @@ public class AutoJump extends Module {
     @Override
     public void onEnable() {
         if (MinecraftClient.getInstance().options != null)
-            MinecraftClient.getInstance().options.autoJump.setValue(true);
+            MinecraftClient.getInstance().options.getAutoJump().setValue(true);
     }
 
     @Override
     public void onDisable() {
         if (MinecraftClient.getInstance().options != null)
-            MinecraftClient.getInstance().options.autoJump.setValue(false);
+            MinecraftClient.getInstance().options.getAutoJump().setValue(false);
     }
 }
