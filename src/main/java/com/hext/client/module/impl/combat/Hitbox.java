@@ -1,26 +1,23 @@
-package com.hext.mixin;
+package com.hext.client.module.impl.combat;
 
-import com.hext.client.Hext;
-import com.hext.client.module.impl.combat.Hitbox;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.math.Box;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import com.hext.client.module.Module;
+import com.hext.client.module.category.Category;
+import com.hext.client.module.setting.SliderSetting;
 
-@Mixin(Entity.class)
-public class EntityRendererMixin {
+public class Hitbox extends Module {
 
-    @ModifyVariable(method = "getVisibilityBoundingBox", at = @At("RETURN"), ordinal = 0)
-    private Box expandHitbox(Box box) {
-        Hitbox mod = Hext.getInstance().getModuleManager()
-                .getModule(Hitbox.class).orElse(null);
-        if (mod == null || !mod.isEnabled()) return box;
-        Entity self = (Entity)(Object)this;
-        net.minecraft.client.MinecraftClient mc = net.minecraft.client.MinecraftClient.getInstance();
-        if (mc.player != null && mc.player.equals(self)) return box;
-        double s = mod.getSize();
-        double h = mod.getHeight();
-        return box.expand(s, h, s);
+    private final SliderSetting size = addSetting(new SliderSetting(
+            "Size", "Hitbox genişletme miktarı", 0.1, 0.0, 1.0, 0.01
+    ));
+
+    private final SliderSetting height = addSetting(new SliderSetting(
+            "Height", "Hitbox yükseklik artışı", 0.1, 0.0, 1.0, 0.01
+    ));
+
+    public Hitbox() {
+        super("Hitbox", "Entity hitbox'larını büyütür", Category.COMBAT);
     }
+
+    public double getSize() { return size.getValue(); }
+    public double getHeight() { return height.getValue(); }
 }
