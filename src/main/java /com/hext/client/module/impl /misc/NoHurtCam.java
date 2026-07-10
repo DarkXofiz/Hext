@@ -1,7 +1,7 @@
-package com.hextclient.client.module.impl.misc;
+package com.hext.client.module.impl.misc;
 
-import com.hextclient.client.module.Module;
-import com.hextclient.client.module.category.Category;
+import com.hext.client.module.Module;
+import com.hext.client.module.category.Category;
 
 public class NoHurtCam extends Module {
 
