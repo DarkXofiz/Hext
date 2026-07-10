@@ -1,4 +1,4 @@
-package com.hextclient.client.util;
+package com.hext.client.util;
 
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.*;
