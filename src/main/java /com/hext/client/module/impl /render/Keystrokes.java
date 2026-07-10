@@ -1,9 +1,9 @@
-package com.hextclient.client.module.impl.render;
+package com.hext.client.module.impl.render;
 
-import com.hextclient.client.module.Module;
-import com.hextclient.client.module.category.Category;
-import com.hextclient.client.module.setting.BooleanSetting;
-import com.hextclient.client.module.setting.ModeSetting;
+import com.hext.client.module.Module;
+import com.hext.client.module.category.Category;
+import com.hext.client.module.setting.BooleanSetting;
+import com.hext.client.module.setting.ModeSetting;
 import net.minecraft.client.MinecraftClient;
 
 public class Keystrokes extends Module {
