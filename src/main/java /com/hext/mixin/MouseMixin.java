@@ -1,7 +1,7 @@
-package com.hextclient.mixin;
+package com.hext.mixin;
 
-import com.hextclient.client.HextClient;
-import com.hextclient.client.module.impl.movement.FreeLook;
+import com.hext.client.Hext;
+import com.hext.client.module.impl.movement.FreeLook;
 import net.minecraft.client.Mouse;
 import net.minecraft.client.MinecraftClient;
 import org.spongepowered.asm.mixin.Mixin;
@@ -14,7 +14,7 @@ public class MouseMixin {
 
     @Inject(method = "updateMouse", at = @At("HEAD"), cancellable = true)
     private void onUpdateMouse(CallbackInfo ci) {
-        FreeLook freelook = HextClient.getInstance().getModuleManager()
+        FreeLook freelook = Hext.getInstance().getModuleManager()
                 .getModule(FreeLook.class).orElse(null);
         if (freelook == null || !freelook.isEnabled() || !freelook.isActive()) return;
         // Cancel normal mouse rotation; rotation handled via dedicated logic
