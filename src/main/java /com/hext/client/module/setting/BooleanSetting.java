@@ -1,4 +1,4 @@
-package com.hextclient.client.module.setting;
+package com.hext.client.module.setting;
 
 public class BooleanSetting extends Setting<Boolean> {
 
