@@ -8,7 +8,8 @@
     "EntityRendererMixin",
     "GameOptionsMixin",
     "GameRendererMixin",
-    "MouseMixin"
+    "MouseMixin",
+    "ReachMixin"
   ],
   "injectors": {
     "defaultRequire": 0
