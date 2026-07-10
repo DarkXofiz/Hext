@@ -12,7 +12,16 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 public class EntityRendererMixin {
 
     @ModifyVariable(method = "getVisibilityBoundingBox", at = @At("RETURN"), ordinal = 0)
-    private Box expandHitbox(Box box) {
+    private Box expandVisibility(Box box) {
+        return expandBox(box);
+    }
+
+    @ModifyVariable(method = "getTargetingBox", at = @At("RETURN"), ordinal = 0)
+    private Box expandTargeting(Box box) {
+        return expandBox(box);
+    }
+
+    private Box expandBox(Box box) {
         Hitbox mod = Hext.getInstance().getModuleManager()
                 .getModule(Hitbox.class).orElse(null);
         if (mod == null || !mod.isEnabled()) return box;
