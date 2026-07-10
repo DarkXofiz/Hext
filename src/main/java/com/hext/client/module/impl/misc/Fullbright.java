@@ -21,8 +21,8 @@ public class Fullbright extends Module {
     public void onEnable() {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client.options != null) {
-            oldGamma = client.options.getGamma();
-            client.options.setGamma(brightness.getValue());
+            oldGamma = client.options.getGamma().getValue();
+            client.options.getGamma().setValue(brightness.getValue());
         }
     }
 
@@ -30,14 +30,14 @@ public class Fullbright extends Module {
     public void onDisable() {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client.options != null) {
-            client.options.setGamma(oldGamma);
+            client.options.getGamma().setValue(oldGamma);
         }
     }
 
     @Override
     public void onTick(MinecraftClient client) {
-        if (client.options != null && client.options.getGamma() < brightness.getValue()) {
-            client.options.setGamma(brightness.getValue());
+        if (client.options != null && client.options.getGamma().getValue() < brightness.getValue()) {
+            client.options.getGamma().setValue(brightness.getValue());
         }
     }
 }
