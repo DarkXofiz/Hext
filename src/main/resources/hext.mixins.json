@@ -4,15 +4,11 @@
   "package": "com.hext.mixin",
   "compatibilityLevel": "JAVA_21",
   "client": [
-    "ClientPlayNetworkHandlerMixin",
     "ClientPlayerEntityMixin",
     "EntityRendererMixin",
     "GameOptionsMixin",
     "GameRendererMixin",
-    "InGameHudMixin",
-    "MouseMixin",
-    "PlayerEntityMixin",
-    "WorldRendererMixin"
+    "MouseMixin"
   ],
   "injectors": {
     "defaultRequire": 0
