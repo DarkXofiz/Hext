@@ -49,10 +49,11 @@ public class HextClient implements ModInitializer, ClientModInitializer {
                 "category.hext"
         )));
 
+        // Açma/kapama tuşu K yapıldı
         openGuiKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.hext.gui",
                 InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_RIGHT_SHIFT,
+                GLFW.GLFW_KEY_K,
                 "category.hext"
         ));
 
@@ -60,9 +61,9 @@ public class HextClient implements ModInitializer, ClientModInitializer {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (client.player == null || client.world == null) return;
             mc = client;
-            while (openGuiKey.wasPressed()) {
-                // Simple toggle via chat or hud later, but we just bind module toggles
-            }
+            // K tuşuna basınca tüm modülleri toggle etmek istersen aşağıdaki satırı aktif et:
+            // while (openGuiKey.wasPressed()) { modules.forEach(BaseModule::toggle); }
+            // Ama sen sadece menü tuşu olarak K istediğin için şimdilik boş bırakıyorum, modüller kendi tuşlarıyla açılıp kapanır.
             modules.forEach(m -> {
                 if (m.keyBinding.wasPressed()) m.toggle();
                 if (m.enabled) m.onTick();
