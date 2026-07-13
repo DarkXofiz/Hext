@@ -1,9 +1,7 @@
 package com.hext.modules;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
@@ -15,7 +13,7 @@ public class ElytraTarget extends BaseModule {
         MinecraftClient mc = MinecraftClient.getInstance();
         if (mc.player == null || mc.world == null) return;
         if (!mc.player.isFallFlying()) return;
-        Entity target = mc.world.getEntitiesByClass(LivingEntity.class, mc.player.getBoundingBox().expand(20), e -> e != mc.player && e.isAlive())
+        var target = mc.world.getEntitiesByClass(LivingEntity.class, mc.player.getBoundingBox().expand(20), e -> e != mc.player && e.isAlive())
                 .stream().findFirst().orElse(null);
         if (target == null) return;
         Vec3d diff = target.getPos().subtract(mc.player.getPos()).add(0, target.getBoundingBox().getLengthY()/2, 0);
