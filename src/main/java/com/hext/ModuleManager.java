@@ -16,7 +16,9 @@ public class ModuleManager {
 
     private ModuleManager() {}
 
-    public static ModuleManager getInstance() { return INSTANCE; }
+    public static ModuleManager getInstance() { 
+        return INSTANCE; 
+    }
 
     public void init() {
         HextClient.modules.add(new Fly());
@@ -42,52 +44,86 @@ public class ModuleManager {
 
         // Tick event
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            try {
-                if (client == null || client.player == null || client.world == null) return;
-                HextClient.mc = client;
+            if (client == null || client.player == null || client.world == null) return;
+            HextClient.mc = client;
 
-                HextClient.modules.forEach(m -> {
-                    if (m == null) return;
-                    if (m.keyBinding != null && m.keyBinding.wasPressed()) {
-                        m.toggle();
-                        com.hext.config.Config.save();
-                    }
-                    if (m.enabled) m.onTick();
-                });
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            HextClient.modules.forEach(m -> {
+                if (m == null) return;
+                if (m.keyBinding != null && m.keyBinding.wasPressed()) {
+                    m.toggle();
+                    com.hext.config.Config.save();
+                }
+                if (m.enabled) m.onTick();
+            });
         });
 
         // Render event
         WorldRenderEvents.AFTER_ENTITIES.register(context -> {
-            try {
-                HextClient.modules.forEach(m -> {
-                    if (m == null) return;
-                    if (m.enabled) {
-                        if (m instanceof Esp) {
-                            ((Esp) m).onRender(context);
-                        }
-                        if (m instanceof Hitbox) {
-                            ((Hitbox) m).onRender(context);
-                        }
+            HextClient.modules.forEach(m -> {
+                if (m == null) return;
+                if (m.enabled) {
+                    if (m instanceof Esp) {
+                        ((Esp) m).onRender(context);
                     }
-                });
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+                    if (m instanceof Hitbox) {
+                        ((Hitbox) m).onRender(context);
+                    }
+                }
+            });
         });
 
         // HUD
         HudRenderCallback.EVENT.register((drawContext, tickDelta) -> {
-            try {
-                if (HextClient.mc == null || HextClient.mc.player == null) return;
-                
-                int y = 10;
-                for (BaseModule m : HextClient.modules) {
-                    if (m != null && m.enabled && m.name != null) {
-                        drawContext.drawText(
-                                HextClient.mc.textRenderer, 
-                                "§a" + m.name, 
-                                10, 
-                                y,
+            if (HextClient.mc == null || HextClient.mc.player == null) return;
+            
+            int y = 10;
+            for (BaseModule m : HextClient.modules) {
+                if (m != null && m.enabled && m.name != null) {
+                    drawContext.drawText(
+                            HextClient.mc.textRenderer, 
+                            "§a" + m.name, 
+                            10, 
+                            y, 
+                            0xFFFFFF, 
+                            true
+                    );
+                    y += 12;
+                }
+            }
+        });
+    }
+
+    public Optional<BaseModule> getModuleByName(String name) {
+        if (name == null || name.isEmpty()) {
+            return Optional.empty();
+        }
+        return HextClient.modules.stream()
+                .filter(m -> m != null && m.name != null && m.name.equalsIgnoreCase(name))
+                .findFirst();
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends BaseModule> T getModule(Class<T> clazz) {
+        if (clazz == null) {
+            return null;
+        }
+        return (T) HextClient.modules.stream()
+                .filter(m -> m != null && clazz.isInstance(m))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public void enableAll() {
+        HextClient.modules.forEach(m -> {
+            if (m != null) m.enabled = true;
+        });
+        com.hext.config.Config.save();
+    }
+
+    public void disableAll() {
+        HextClient.modules.forEach(m -> {
+            if (m != null) m.enabled = false;
+        });
+        com.hext.config.Config.save();
+    }
+}
