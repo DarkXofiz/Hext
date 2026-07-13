@@ -9,7 +9,7 @@ import java.util.Comparator;
 
 public class ElytraTarget extends BaseModule {
     private static final double DEFAULT_RANGE = 20.0;
-    private static final double DEFAULT_AUTO = true;
+    private static final boolean DEFAULT_AUTO = true;
     private static final double VERTICAL_OFFSET_DIVISOR = 2.0;
     private static final double DEGREE_MULTIPLIER = 180.0 / Math.PI;
     private static final float PITCH_MIN = -90f;
@@ -44,13 +44,9 @@ public class ElytraTarget extends BaseModule {
 
         } catch (Exception e) {
             System.err.println("ElytraTarget module error: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
-    /**
-     * Menzil içinde en yakın hedefi bulur
-     */
     private LivingEntity findTarget(MinecraftClient mc, double range) {
         if (mc.world == null || mc.player == null) return null;
 
@@ -65,33 +61,26 @@ public class ElytraTarget extends BaseModule {
                 .orElse(null);
     }
 
-    /**
-     * Hedefi kilit altına alır ve Yaw/Pitch ayarlar
-     */
     private void lockOnTarget(MinecraftClient mc, LivingEntity target) {
         if (mc.player == null) return;
 
         try {
-            // Hedef konumunu hesapla
             Vec3d playerPos = mc.player.getPos();
             Vec3d targetPos = target.getPos();
             
             if (playerPos == null || targetPos == null) return;
 
-            // Dikey offset ile hedefi merkeze al
             double verticalOffset = target.getBoundingBox().getLengthY() / VERTICAL_OFFSET_DIVISOR;
             Vec3d diff = targetPos
                     .add(0, verticalOffset, 0)
                     .subtract(playerPos);
 
-            // Yaw ve Pitch hesapla
             double horizontalDist = diff.horizontalLength();
             if (horizontalDist <= 0) return;
 
             float yaw = (float) (-MathHelper.atan2(diff.x, diff.z) * DEGREE_MULTIPLIER);
             float pitch = (float) (-MathHelper.atan2(diff.y, horizontalDist) * DEGREE_MULTIPLIER);
 
-            // Açıları uygula
             if (mc.player.getYaw() != yaw) {
                 mc.player.setYaw(yaw);
             }
