@@ -1,8 +1,6 @@
 package com.hext.modules;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -10,7 +8,6 @@ import net.minecraft.screen.slot.SlotActionType;
 
 public class ElytraReplace extends BaseModule {
     public ElytraReplace() { super("ElytraReplace"); }
-    private boolean swapping = false;
 
     @Override
     public void onTick() {
