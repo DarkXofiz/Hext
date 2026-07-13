@@ -10,8 +10,6 @@ import java.util.List;
 
 public class HextScreen extends Screen {
 
-    // Renk paleti - Neon koyu tema
-    private static final int BG_COLOR         = 0xE5101010;
     private static final int PANEL_COLOR       = 0xFF1A1A2E;
     private static final int PANEL_BORDER      = 0xFF7B2FBE;
     private static final int HEADER_COLOR      = 0xFF16213E;
@@ -25,17 +23,15 @@ public class HextScreen extends Screen {
     private static final int ACCENT            = 0xFF7B2FBE;
     private static final int SHADOW            = 0xCC000000;
 
-    private static final int PANEL_W   = 240;
+    private static final int PANEL_W     = 240;
     private static final int PANEL_H_BASE = 50;
-    private static final int MODULE_H  = 26;
-    private static final int PADDING   = 10;
+    private static final int MODULE_H    = 26;
+    private static final int PADDING     = 10;
 
     private int panelX, panelY;
     private boolean dragging = false;
     private int dragOffX, dragOffY;
     private int hoveredIndex = -1;
-    private float scrollOffset = 0;
-    private int maxScroll = 0;
 
     public HextScreen() {
         super(Text.literal("Hext"));
@@ -45,7 +41,6 @@ public class HextScreen extends Screen {
     protected void init() {
         panelX = (width - PANEL_W) / 2;
         panelY = (height - getPanelH()) / 2;
-        // Ortala
         panelX = Math.max(0, Math.min(width - PANEL_W, panelX));
         panelY = Math.max(0, Math.min(height - getPanelH(), panelY));
     }
@@ -56,7 +51,6 @@ public class HextScreen extends Screen {
 
     @Override
     public void render(DrawContext ctx, int mouseX, int mouseY, float delta) {
-        // Arka plan blur efekti
         ctx.fill(0, 0, width, height, 0xBB000000);
 
         int ph = getPanelH();
@@ -64,29 +58,26 @@ public class HextScreen extends Screen {
         // Gölge
         ctx.fill(panelX + 4, panelY + 4, panelX + PANEL_W + 4, panelY + ph + 4, SHADOW);
 
-        // Dış kenarlık (parlayan mor)
+        // Dış kenarlık
         ctx.fill(panelX - 2, panelY - 2, panelX + PANEL_W + 2, panelY + ph + 2, PANEL_BORDER);
-        
-        // Ana panel - gradient efekti için iki kat
+
+        // Ana panel
         ctx.fill(panelX, panelY, panelX + PANEL_W, panelY + ph, PANEL_COLOR);
-        ctx.fill(panelX, panelY, panelX + PANEL_W, panelY + 4, 0xFF2A2A4A);
 
         // Header
         ctx.fill(panelX, panelY, panelX + PANEL_W, panelY + 36, HEADER_COLOR);
         ctx.fill(panelX, panelY + 36, panelX + PANEL_W, panelY + 37, ACCENT);
 
         // Logo
-        String logo = "⚡ HEXT";
-        ctx.drawText(textRenderer, logo, panelX + PADDING, panelY + 12, TEXT_PURPLE, true);
+        ctx.drawText(textRenderer, "⚡ HEXT", panelX + PADDING, panelY + 12, TEXT_PURPLE, true);
 
         // Versiyon
         String ver = "v1.0";
         ctx.drawText(textRenderer, ver, panelX + PANEL_W - PADDING - textRenderer.getWidth(ver), panelY + 12, TEXT_GRAY, false);
 
-        // Modül sayacı
+        // Aktif sayacı
         long active = HextClient.modules.stream().filter(m -> m.enabled).count();
-        String status = active + "/" + HextClient.modules.size() + " aktif";
-        ctx.drawText(textRenderer, status, panelX + PADDING, panelY + 24, TEXT_GRAY, false);
+        ctx.drawText(textRenderer, active + "/" + HextClient.modules.size() + " aktif", panelX + PADDING, panelY + 24, TEXT_GRAY, false);
 
         // Modül listesi
         List<BaseModule> modules = HextClient.modules;
@@ -102,26 +93,10 @@ public class HextScreen extends Screen {
                     && mouseY >= my && mouseY <= my + MODULE_H - 2;
             if (hover) hoveredIndex = i;
 
-            // Satır arkaplanı
-            int rowBg = hover ? MODULE_BG_HOVER : MODULE_BG;
-            ctx.fill(mx, my, mx + mw, my + MODULE_H - 2, rowBg);
+            ctx.fill(mx, my, mx + mw, my + MODULE_H - 2, hover ? MODULE_BG_HOVER : MODULE_BG);
+            ctx.fill(mx, my, mx + 3, my + MODULE_H - 2, m.enabled ? MODULE_ENABLED : MODULE_DISABLED);
 
-            // Sol renkli şerit
-            int stripColor = m.enabled ? MODULE_ENABLED : MODULE_DISABLED;
-            ctx.fill(mx, my, mx + 3, my + MODULE_H - 2, stripColor);
-
-            // Modül adı
-            int nameColor = m.enabled ? TEXT_PURPLE : TEXT_GRAY;
-            String displayName = m.name;
-            ctx.drawText(textRenderer, displayName, mx + 10, my + 8, nameColor, true);
-
-            // Keybinding gösterimi
-            if (m.keyBinding != null && m.keyBinding.getDefaultKey().getCode() != -1) {
-                String keyText = m.keyBinding.getBoundKeyLocalizedText().getString();
-                if (!keyText.isEmpty() && !keyText.equals("Unknown")) {
-                    ctx.drawText(textRenderer, keyText, mx + mw - 50, my + 8, TEXT_GRAY, false);
-                }
-            }
+            ctx.drawText(textRenderer, m.name, mx + 10, my + 8, m.enabled ? TEXT_PURPLE : TEXT_GRAY, true);
 
             // Toggle buton
             int btnX = mx + mw - 30;
@@ -131,7 +106,7 @@ public class HextScreen extends Screen {
 
             if (m.enabled) {
                 ctx.fill(btnX, btnY, btnX + btnW, btnY + btnH, MODULE_ENABLED);
-                ctx.fill(btnX + btnW - 8, btnY + 1, btnX + btnW - 1, btnY + btnH - 1, 0xFFFFFFFF);
+                ctx.fill(btnX + btnW - 8, btnY + 1, btnX + btnW - 1, btnY + btnH - 1, TEXT_WHITE);
                 ctx.drawText(textRenderer, "ON", btnX + 2, btnY + 2, TEXT_WHITE, false);
             } else {
                 ctx.fill(btnX, btnY, btnX + btnW, btnY + btnH, 0xFF333333);
@@ -141,16 +116,14 @@ public class HextScreen extends Screen {
         }
 
         // Alt bilgi
-        ctx.drawText(textRenderer, "[K] Kapat  [Sürükle] Taşı", panelX + PADDING, panelY + ph - 14, TEXT_GRAY, false);
+        ctx.drawText(textRenderer, "[ESC] Kapat  [Sürükle] Taşı", panelX + PADDING, panelY + ph - 14, TEXT_GRAY, false);
 
         super.render(ctx, mouseX, mouseY, delta);
     }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        int ph = getPanelH();
-
-        // Header'a tıkla - sürükle
+        // Header sürükle
         if (mouseX >= panelX && mouseX <= panelX + PANEL_W
                 && mouseY >= panelY && mouseY <= panelY + 36) {
             dragging = true;
@@ -196,16 +169,6 @@ public class HextScreen extends Screen {
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        // K tuşu ile menüyü kapat
-        if (HextClient.openGuiKey.matchesKey(keyCode, scanCode)) {
-            close();
-            return true;
-        }
-        return super.keyPressed(keyCode, scanCode, modifiers);
-    }
-
-    @Override
     public boolean shouldPause() {
         return false;
     }
@@ -213,10 +176,5 @@ public class HextScreen extends Screen {
     @Override
     public boolean shouldCloseOnEsc() {
         return true;
-    }
-
-    @Override
-    public void close() {
-        super.close();
     }
 }
