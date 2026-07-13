@@ -2,9 +2,11 @@ package com.hext.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.hext.HextClient;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -14,9 +16,11 @@ import java.util.Map;
 public class Config {
     private static final Path CONFIG_PATH = Paths.get("config/hext_config.json");
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    private static final Type MAP_TYPE = new TypeToken<Map<String, Boolean>>() {}.getType();
 
     public static void save() {
         try {
+            Files.createDirectories(CONFIG_PATH.getParent());
             Map<String, Boolean> data = new HashMap<>();
             HextClient.modules.forEach(m -> data.put(m.name, m.enabled));
             Files.writeString(CONFIG_PATH, GSON.toJson(data));
@@ -29,7 +33,8 @@ public class Config {
         if (!Files.exists(CONFIG_PATH)) return;
         try {
             String json = Files.readString(CONFIG_PATH);
-            Map<String, Boolean> data = GSON.fromJson(json, Map.class);
+            Map<String, Boolean> data = GSON.fromJson(json, MAP_TYPE);
+            if (data == null) return;
             HextClient.modules.forEach(m -> {
                 if (data.containsKey(m.name)) m.enabled = data.get(m.name);
             });
