@@ -10,8 +10,6 @@ import java.util.Comparator;
 
 public class Aura extends BaseModule {
     private int tickCounter = 0;
-    private static final double DEFAULT_RANGE = 6.0;
-    private static final double DEFAULT_DELAY = 2.0;
 
     public Aura() {
         super("Aura");
@@ -25,32 +23,33 @@ public class Aura extends BaseModule {
         MinecraftClient mc = MinecraftClient.getInstance();
         if (mc.player == null || mc.world == null) return;
 
-        // Ayarları oku
+        // Ayarları oku (final yapısına al)
         Double range = getSetting("Menzil");
         Double delay = getSetting("Gecikme");
         Boolean teamCheck = getSetting("Takım");
 
-        if (range == null) range = DEFAULT_RANGE;
-        if (delay == null) delay = DEFAULT_DELAY;
+        if (range == null) range = 6.0;
+        if (delay == null) delay = 2.0;
         if (teamCheck == null) teamCheck = false;
 
-        // Gecikme kontrolü
+        // Final kopyaları oluştur (lambda için)
+        final double finalRange = range;
+        final boolean finalTeamCheck = teamCheck;
+
         tickCounter = (tickCounter + 1) % 20;
         if (tickCounter % (int) Math.max(1, delay) != 0) return;
 
-        // Hedef bul
-        Box box = mc.player.getBoundingBox().expand(range);
+        Box box = mc.player.getBoundingBox().expand(finalRange);
         Entity target = mc.world.getEntitiesByClass(
                 LivingEntity.class, box,
                 e -> e != mc.player 
                     && e.isAlive() 
-                    && (teamCheck ? !isTeammate(e) : true) // Takım kontrolü
+                    && (finalTeamCheck ? !isTeammate(e) : true)
         ).stream()
                 .min(Comparator.comparingDouble(e -> mc.player.distanceTo(e)))
                 .orElse(null);
 
-        // Saldır
-        if (target != null && mc.player.distanceTo(target) <= range) {
+        if (target != null && mc.player.distanceTo(target) <= finalRange) {
             if (mc.interactionManager != null) {
                 mc.interactionManager.attackEntity(mc.player, target);
                 mc.player.swingHand(Hand.MAIN_HAND);
@@ -58,9 +57,6 @@ public class Aura extends BaseModule {
         }
     }
 
-    /**
-     * Takım arkadaşı kontrolü
-     */
     private boolean isTeammate(Entity entity) {
         if (!(entity instanceof LivingEntity)) return false;
         
@@ -69,7 +65,6 @@ public class Aura extends BaseModule {
         
         if (mc.player == null) return false;
         
-        // Scoreboard takım kontrolü
         if (mc.player.getScoreboardTeam() != null && livingEntity.getScoreboardTeam() != null) {
             return mc.player.getScoreboardTeam().equals(livingEntity.getScoreboardTeam());
         }
