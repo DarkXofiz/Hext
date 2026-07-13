@@ -1,4 +1,3 @@
-// 3. ModuleManager.java - Update (Add Hitbox render event)
 package com.hext;
 
 import com.hext.modules.*;
@@ -59,7 +58,7 @@ public class ModuleManager {
         });
 
         // Render event - World
-        WorldRenderEvents.AFTER_ENTITIES.register(context -> {
+        WorldRenderEvents.AFTER_TRANSLUCENT_RENDER.register(context -> {
             HextClient.modules.forEach(m -> {
                 if (m == null) return;
                 if (m.enabled) {
