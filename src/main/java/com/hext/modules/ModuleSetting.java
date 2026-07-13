@@ -1,22 +1,35 @@
-public class ModuleSetting {
-    public enum Type { BOOLEAN, SLIDER, TEXT }
+package com.hext.modules;
 
-    private String name;
-    private Type type;
-    private Object value;
-    private double min;
-    private double max;
+public class ModuleSetting {
+    public enum Type {
+        BOOLEAN,
+        SLIDER,
+        TEXT
+    }
+
+    public String name;
+    public Type type;
+    public Object value;
+    public double min;
+    public double max;
 
     public ModuleSetting(String name, Type type, Object value) {
-        this(name, type, value, 0, 1);
+        if (name == null || name.isEmpty()) {
+            throw new IllegalArgumentException("Setting adı boş olamaz");
+        }
+        this.name = name;
+        this.type = type;
+        this.value = value;
+        this.min = 0;
+        this.max = 1;
     }
 
     public ModuleSetting(String name, Type type, Object value, double min, double max) {
-        if (name == null || type == null) {
-            throw new IllegalArgumentException("name ve type null olamaz");
+        if (name == null || name.isEmpty()) {
+            throw new IllegalArgumentException("Setting adı boş olamaz");
         }
         if (min > max) {
-            throw new IllegalArgumentException("min max'tan büyük olamaz");
+            throw new IllegalArgumentException("Min değeri max'tan büyük olamaz");
         }
         this.name = name;
         this.type = type;
@@ -24,10 +37,4 @@ public class ModuleSetting {
         this.min = min;
         this.max = max;
     }
-
-    public String getName() { return name; }
-    public Type getType() { return type; }
-    public Object getValue() { return value; }
-    public double getMin() { return min; }
-    public double getMax() { return max; }
 }
