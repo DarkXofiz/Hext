@@ -58,7 +58,7 @@ public class ModuleManager {
         });
 
         // Render event - World
-        WorldRenderEvents.AFTER_TRANSLUCENT_RENDER.register(context -> {
+        WorldRenderEvents.END.register(context -> {
             HextClient.modules.forEach(m -> {
                 if (m == null) return;
                 if (m.enabled) {
