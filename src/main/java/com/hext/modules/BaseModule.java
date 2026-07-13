@@ -1,6 +1,7 @@
 package com.hext.modules;
 
 import net.minecraft.client.option.KeyBinding;
+import com.hext.modules.ModuleSetting;
 
 import java.util.ArrayList;
 import java.util.List;
