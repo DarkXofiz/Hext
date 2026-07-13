@@ -1,18 +1,15 @@
-// 2. Hitbox.java - FIXED (Render only, no collision changes)
 package com.hext.modules;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Matrix4f;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
+import org.joml.Matrix4f;
 
 public class Hitbox extends BaseModule {
-    private static final float LINE_WIDTH = 1.5f;
 
     public Hitbox() {
         super("Hitbox");
@@ -27,7 +24,7 @@ public class Hitbox extends BaseModule {
         // Nothing to do on tick
     }
 
-    public void onRender(WorldRenderEvents.After context) {
+    public void onRender(WorldRenderEvents.AfterTranslucentRenderEvent context) {
         try {
             MinecraftClient mc = MinecraftClient.getInstance();
             if (mc.world == null || mc.player == null || mc.camera == null) return;
@@ -55,7 +52,7 @@ public class Hitbox extends BaseModule {
                 if (!entity.isAlive()) continue;
 
                 Box box = entity.getBoundingBox();
-                drawBox(context, box, r, g, b, a);
+                drawBox(context, box, r, g, b, a, mc.camera.getPos().x, mc.camera.getPos().y, mc.camera.getPos().z);
             }
 
         } catch (Exception e) {
@@ -63,11 +60,7 @@ public class Hitbox extends BaseModule {
         }
     }
 
-    private void drawBox(WorldRenderEvents.After context, Box box, float r, float g, float b, float a) {
-        double camX = context.camera().getPos().x;
-        double camY = context.camera().getPos().y;
-        double camZ = context.camera().getPos().z;
-
+    private void drawBox(WorldRenderEvents.AfterTranslucentRenderEvent context, Box box, float r, float g, float b, float a, double camX, double camY, double camZ) {
         double x1 = box.minX - camX;
         double y1 = box.minY - camY;
         double z1 = box.minZ - camZ;
@@ -75,39 +68,37 @@ public class Hitbox extends BaseModule {
         double y2 = box.maxY - camY;
         double z2 = box.maxZ - camZ;
 
-        // Render lines
         var matrices = context.matrixStack();
         matrices.push();
 
         VertexConsumer consumer = context.consumers().getBuffer(RenderLayer.getLines());
+        Matrix4f matrix = matrices.peek().getPositionMatrix();
 
         // Bottom face
-        drawLine(consumer, matrices, x1, y1, z1, x2, y1, z1, r, g, b, a);
-        drawLine(consumer, matrices, x2, y1, z1, x2, y1, z2, r, g, b, a);
-        drawLine(consumer, matrices, x2, y1, z2, x1, y1, z2, r, g, b, a);
-        drawLine(consumer, matrices, x1, y1, z2, x1, y1, z1, r, g, b, a);
+        drawLine(consumer, matrix, x1, y1, z1, x2, y1, z1, r, g, b, a);
+        drawLine(consumer, matrix, x2, y1, z1, x2, y1, z2, r, g, b, a);
+        drawLine(consumer, matrix, x2, y1, z2, x1, y1, z2, r, g, b, a);
+        drawLine(consumer, matrix, x1, y1, z2, x1, y1, z1, r, g, b, a);
 
         // Top face
-        drawLine(consumer, matrices, x1, y2, z1, x2, y2, z1, r, g, b, a);
-        drawLine(consumer, matrices, x2, y2, z1, x2, y2, z2, r, g, b, a);
-        drawLine(consumer, matrices, x2, y2, z2, x1, y2, z2, r, g, b, a);
-        drawLine(consumer, matrices, x1, y2, z2, x1, y2, z1, r, g, b, a);
+        drawLine(consumer, matrix, x1, y2, z1, x2, y2, z1, r, g, b, a);
+        drawLine(consumer, matrix, x2, y2, z1, x2, y2, z2, r, g, b, a);
+        drawLine(consumer, matrix, x2, y2, z2, x1, y2, z2, r, g, b, a);
+        drawLine(consumer, matrix, x1, y2, z2, x1, y2, z1, r, g, b, a);
 
         // Vertical lines
-        drawLine(consumer, matrices, x1, y1, z1, x1, y2, z1, r, g, b, a);
-        drawLine(consumer, matrices, x2, y1, z1, x2, y2, z1, r, g, b, a);
-        drawLine(consumer, matrices, x2, y1, z2, x2, y2, z2, r, g, b, a);
-        drawLine(consumer, matrices, x1, y1, z2, x1, y2, z2, r, g, b, a);
+        drawLine(consumer, matrix, x1, y1, z1, x1, y2, z1, r, g, b, a);
+        drawLine(consumer, matrix, x2, y1, z1, x2, y2, z1, r, g, b, a);
+        drawLine(consumer, matrix, x2, y1, z2, x2, y2, z2, r, g, b, a);
+        drawLine(consumer, matrix, x1, y1, z2, x1, y2, z2, r, g, b, a);
 
         matrices.pop();
     }
 
-    private void drawLine(VertexConsumer consumer, MatrixStack matrices, 
+    private void drawLine(VertexConsumer consumer, Matrix4f matrix, 
                          double x1, double y1, double z1, 
                          double x2, double y2, double z2, 
                          float r, float g, float b, float a) {
-        
-        Matrix4f matrix = matrices.peek().getPositionMatrix();
         
         consumer.vertex(matrix, (float) x1, (float) y1, (float) z1)
                 .color(r, g, b, a)
