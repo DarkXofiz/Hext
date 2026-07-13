@@ -3,10 +3,8 @@ package com.hext.config;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonElement;
 import com.hext.HextClient;
 import com.hext.modules.BaseModule;
-import com.hext.modules.ModuleSetting;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -16,86 +14,67 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Config {
-    private static final String CONFIG_DIR = "config";
-    private static final String CONFIG_FILE = "hext_config.json";
-    private static final Path CONFIG_PATH = Paths.get(CONFIG_DIR, CONFIG_FILE);
+    private static final Path CONFIG_PATH = Paths.get("config/hext_config.json");
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     public static void save() {
         try {
-            if (HextClient.modules == null) return;
+            if (HextClient.modules == null || HextClient.modules.isEmpty()) {
+                return;
+            }
 
             Map<String, Object> data = new HashMap<>();
 
-            for (BaseModule module : HextClient.modules) {
-                if (module == null || module.name == null) continue;
-
-                Map<String, Object> moduleData = new HashMap<>();
-                moduleData.put("enabled", module.enabled);
-
-                Map<String, Object> settingsMap = new HashMap<>();
-                if (module.getSettings() != null) {
-                    for (ModuleSetting setting : module.getSettings()) {
-                        if (setting != null && setting.name != null) {
-                            settingsMap.put(setting.name, setting.value);
-                        }
-                    }
+            for (int i = 0; i < HextClient.modules.size(); i++) {
+                BaseModule m = HextClient.modules.get(i);
+                if (m == null || m.name == null) {
+                    continue;
                 }
-                moduleData.put("settings", settingsMap);
-                data.put(module.name, moduleData);
+
+                Map<String, Object> moduleMap = new HashMap<>();
+                moduleMap.put("enabled", m.enabled);
+                moduleMap.put("settings", new HashMap<>());
+
+                data.put(m.name, moduleMap);
             }
 
             Files.createDirectories(CONFIG_PATH.getParent());
-            Files.writeString(CONFIG_PATH, GSON.toJson(data));
+            Files.write(CONFIG_PATH, GSON.toJson(data).getBytes());
 
-        } catch (Exception e) {
-            System.err.println("[HEXT] Save error: " + e.getMessage());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
     public static void load() {
         try {
-            if (!Files.exists(CONFIG_PATH)) return;
-            if (HextClient.modules == null) return;
+            if (!Files.exists(CONFIG_PATH) || HextClient.modules == null || HextClient.modules.isEmpty()) {
+                return;
+            }
 
-            String json = Files.readString(CONFIG_PATH);
-            JsonObject data = GSON.fromJson(json, JsonObject.class);
-            
-            if (data == null) return;
+            String json = new String(Files.readAllBytes(CONFIG_PATH));
+            JsonObject root = GSON.fromJson(json, JsonObject.class);
 
-            for (BaseModule module : HextClient.modules) {
-                if (module == null || module.name == null) continue;
-                if (!data.has(module.name)) continue;
+            if (root == null) {
+                return;
+            }
 
-                JsonObject moduleData = data.getAsJsonObject(module.name);
-
-                if (moduleData.has("enabled")) {
-                    module.enabled = moduleData.get("enabled").getAsBoolean();
+            for (int i = 0; i < HextClient.modules.size(); i++) {
+                BaseModule m = HextClient.modules.get(i);
+                if (m == null || m.name == null) {
+                    continue;
                 }
 
-                if (moduleData.has("settings") && module.getSettings() != null) {
-                    JsonObject settingsJson = moduleData.getAsJsonObject("settings");
-                    
-                    for (ModuleSetting setting : module.getSettings()) {
-                        if (setting == null || setting.name == null) continue;
-                        if (settingsJson.has(setting.name)) {
-                            JsonElement element = settingsJson.get(setting.name);
-                            if (element.isJsonPrimitive()) {
-                                if (element.getAsJsonPrimitive().isBoolean()) {
-                                    setting.value = element.getAsBoolean();
-                                } else if (element.getAsJsonPrimitive().isNumber()) {
-                                    setting.value = element.getAsDouble();
-                                } else {
-                                    setting.value = element.getAsString();
-                                }
-                            }
-                        }
+                if (root.has(m.name)) {
+                    JsonObject moduleObj = root.getAsJsonObject(m.name);
+                    if (moduleObj.has("enabled")) {
+                        m.enabled = moduleObj.get("enabled").getAsBoolean();
                     }
                 }
             }
 
-        } catch (Exception e) {
-            System.err.println("[HEXT] Load error: " + e.getMessage());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
