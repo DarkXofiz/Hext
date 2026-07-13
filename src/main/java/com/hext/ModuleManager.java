@@ -20,15 +20,17 @@ public class ModuleManager {
     public static ModuleManager getInstance() { return INSTANCE; }
 
     public void init() {
+        // Modülleri ekle
         HextClient.modules.add(new Fly());
         HextClient.modules.add(new Aura());
         HextClient.modules.add(new Trigger());
-        HextClient.modules.add(new ESP());
+        HextClient.modules.add(new Esp()); // ESP -> Esp
         HextClient.modules.add(new Hitbox());
         HextClient.modules.add(new ElytraTarget());
         HextClient.modules.add(new ElytraReplace());
         HextClient.modules.add(new ElytraSwap());
 
+        // Her module için keybinding
         HextClient.modules.forEach(m -> m.keyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.hext." + m.name.toLowerCase(),
                 InputUtil.Type.KEYSYM,
@@ -36,6 +38,7 @@ public class ModuleManager {
                 "category.hext"
         )));
 
+        // K tuşu - tüm modülleri toggle
         openGuiKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.hext.toggle_all",
                 InputUtil.Type.KEYSYM,
@@ -43,6 +46,7 @@ public class ModuleManager {
                 "category.hext"
         ));
 
+        // Tick event
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (client.player == null || client.world == null) return;
             HextClient.mc = client;
@@ -61,13 +65,15 @@ public class ModuleManager {
             });
         });
 
+        // Render event
         WorldRenderEvents.AFTER_ENTITIES.register(context -> {
             HextClient.modules.forEach(m -> {
-                if (m.enabled && m instanceof ESP) ((ESP) m).onRender(context);
+                if (m.enabled && m instanceof Esp) ((Esp) m).onRender(context);
                 if (m.enabled && m instanceof Hitbox) ((Hitbox) m).onRender(context);
             });
         });
 
+        // HUD
         HudRenderCallback.EVENT.register((drawContext, tickDelta) -> {
             if (HextClient.mc.player == null) return;
             int y = 10;
