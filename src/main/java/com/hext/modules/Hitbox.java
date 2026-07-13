@@ -108,4 +108,4 @@ public class Hitbox extends BaseModule {
                 .color(r, g, b, a)
                 .next();
     }
-}
+                 }
