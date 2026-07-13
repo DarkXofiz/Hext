@@ -1,8 +1,6 @@
 package com.hext.modules;
 
-import com.hext.HextClient;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.InputUtil;
 
 public abstract class BaseModule {
     public String name;
