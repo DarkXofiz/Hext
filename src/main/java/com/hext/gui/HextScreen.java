@@ -17,6 +17,7 @@ public class HextScreen extends Screen {
     private static final int MODULE_BG_HOVER   = 0xFF1A4A7A;
     private static final int MODULE_ENABLED    = 0xFF7B2FBE;
     private static final int MODULE_DISABLED   = 0xFF2D2D2D;
+    private static final int SETTINGS_BG       = 0xFF1A1A2E;
     private static final int TEXT_WHITE        = 0xFFFFFFFF;
     private static final int TEXT_GRAY         = 0xFFAAAAAA;
     private static final int TEXT_PURPLE       = 0xFFBB86FC;
@@ -24,14 +25,18 @@ public class HextScreen extends Screen {
     private static final int SHADOW            = 0xCC000000;
 
     private static final int PANEL_W     = 240;
+    private static final int SETTINGS_W  = 200;
     private static final int PANEL_H_BASE = 50;
     private static final int MODULE_H    = 26;
+    private static final int SETTING_H   = 30;
     private static final int PADDING     = 10;
 
     private int panelX, panelY;
+    private int settingsX, settingsY;
     private boolean dragging = false;
     private int dragOffX, dragOffY;
     private int hoveredIndex = -1;
+    private BaseModule selectedModule = null;
 
     public HextScreen() {
         super(Text.literal("Hext"));
@@ -39,14 +44,22 @@ public class HextScreen extends Screen {
 
     @Override
     protected void init() {
-        panelX = (width - PANEL_W) / 2;
-        panelY = (height - getPanelH()) / 2;
-        panelX = Math.max(0, Math.min(width - PANEL_W, panelX));
-        panelY = Math.max(0, Math.min(height - getPanelH(), panelY));
+        int totalW = PANEL_W + SETTINGS_W + PADDING * 2;
+        int startX = (width - totalW) / 2;
+        panelX = startX;
+        settingsX = panelX + PANEL_W + PADDING;
+        int totalH = Math.max(getPanelH(), 300);
+        panelY = (height - totalH) / 2;
+        settingsY = panelY;
     }
 
     private int getPanelH() {
         return PANEL_H_BASE + HextClient.modules.size() * MODULE_H + PADDING;
+    }
+
+    private int getSettingsH() {
+        if (selectedModule == null) return 100;
+        return 60 + selectedModule.getSettingCount() * SETTING_H;
     }
 
     @Override
@@ -55,27 +68,20 @@ public class HextScreen extends Screen {
 
         int ph = getPanelH();
 
-        // Gölge
+        // === MODÜL PANELİ ===
         ctx.fill(panelX + 4, panelY + 4, panelX + PANEL_W + 4, panelY + ph + 4, SHADOW);
-
-        // Dış kenarlık
         ctx.fill(panelX - 2, panelY - 2, panelX + PANEL_W + 2, panelY + ph + 2, PANEL_BORDER);
-
-        // Ana panel
         ctx.fill(panelX, panelY, panelX + PANEL_W, panelY + ph, PANEL_COLOR);
+        ctx.fill(panelX, panelY, panelX + PANEL_W, panelY + 4, 0xFF2A2A4A);
 
         // Header
         ctx.fill(panelX, panelY, panelX + PANEL_W, panelY + 36, HEADER_COLOR);
         ctx.fill(panelX, panelY + 36, panelX + PANEL_W, panelY + 37, ACCENT);
-
-        // Logo
         ctx.drawText(textRenderer, "⚡ HEXT", panelX + PADDING, panelY + 12, TEXT_PURPLE, true);
 
-        // Versiyon
         String ver = "v1.0";
         ctx.drawText(textRenderer, ver, panelX + PANEL_W - PADDING - textRenderer.getWidth(ver), panelY + 12, TEXT_GRAY, false);
 
-        // Aktif sayacı
         long active = HextClient.modules.stream().filter(m -> m.enabled).count();
         ctx.drawText(textRenderer, active + "/" + HextClient.modules.size() + " aktif", panelX + PADDING, panelY + 24, TEXT_GRAY, false);
 
@@ -93,12 +99,23 @@ public class HextScreen extends Screen {
                     && mouseY >= my && mouseY <= my + MODULE_H - 2;
             if (hover) hoveredIndex = i;
 
-            ctx.fill(mx, my, mx + mw, my + MODULE_H - 2, hover ? MODULE_BG_HOVER : MODULE_BG);
+            int rowBg = MODULE_BG;
+            if (selectedModule == m) rowBg = 0xFF2A1A4A;
+            else if (hover) rowBg = MODULE_BG_HOVER;
+            ctx.fill(mx, my, mx + mw, my + MODULE_H - 2, rowBg);
             ctx.fill(mx, my, mx + 3, my + MODULE_H - 2, m.enabled ? MODULE_ENABLED : MODULE_DISABLED);
 
-            ctx.drawText(textRenderer, m.name, mx + 10, my + 8, m.enabled ? TEXT_PURPLE : TEXT_GRAY, true);
+            int nameColor = m.enabled ? TEXT_PURPLE : TEXT_GRAY;
+            if (selectedModule == m) nameColor = 0xFFFF6B6B;
+            ctx.drawText(textRenderer, m.name, mx + 10, my + 8, nameColor, true);
 
-            // Toggle buton
+            if (m.keyBinding != null && m.keyBinding.getDefaultKey().getCode() != -1) {
+                String keyText = m.keyBinding.getBoundKeyLocalizedText().getString();
+                if (!keyText.isEmpty() && !keyText.equals("Unknown")) {
+                    ctx.drawText(textRenderer, keyText, mx + mw - 50, my + 8, TEXT_GRAY, false);
+                }
+            }
+
             int btnX = mx + mw - 30;
             int btnY = my + 6;
             int btnW = 24;
@@ -115,8 +132,21 @@ public class HextScreen extends Screen {
             }
         }
 
-        // Alt bilgi
         ctx.drawText(textRenderer, "[ESC] Kapat  [Sürükle] Taşı", panelX + PADDING, panelY + ph - 14, TEXT_GRAY, false);
+
+        // === AYAR PANELİ ===
+        if (selectedModule != null) {
+            int sh = getSettingsH();
+            ctx.fill(settingsX + 4, settingsY + 4, settingsX + SETTINGS_W + 4, settingsY + sh + 4, SHADOW);
+            ctx.fill(settingsX - 2, settingsY - 2, settingsX + SETTINGS_W + 2, settingsY + sh + 2, PANEL_BORDER);
+            ctx.fill(settingsX, settingsY, settingsX + SETTINGS_W, settingsY + sh, SETTINGS_BG);
+            ctx.fill(settingsX, settingsY, settingsX + SETTINGS_W, settingsY + 4, 0xFF2A2A4A);
+
+            ctx.fill(settingsX, settingsY, settingsX + SETTINGS_W, settingsY + 32, HEADER_COLOR);
+            ctx.fill(settingsX, settingsY + 32, settingsX + SETTINGS_W, settingsY + 33, ACCENT);
+            ctx.drawText(textRenderer, "⚙ " + selectedModule.name, settingsX + PADDING, settingsY + 10, TEXT_PURPLE, true);
+            ctx.drawText(textRenderer, "Ayar yok", settingsX + PADDING, settingsY + 45, TEXT_GRAY, false);
+        }
 
         super.render(ctx, mouseX, mouseY, delta);
     }
@@ -132,7 +162,7 @@ public class HextScreen extends Screen {
             return true;
         }
 
-        // Modül toggle
+        // Modül toggle / seç
         List<BaseModule> modules = HextClient.modules;
         for (int i = 0; i < modules.size(); i++) {
             int my = panelY + 42 + i * MODULE_H;
@@ -141,10 +171,28 @@ public class HextScreen extends Screen {
 
             if (mouseX >= mx && mouseX <= mx + mw
                     && mouseY >= my && mouseY <= my + MODULE_H - 2) {
-                modules.get(i).toggle();
-                com.hext.config.Config.save();
+
+                int btnX = mx + mw - 30;
+                int btnY = my + 6;
+                int btnW = 24;
+                int btnH = 12;
+
+                if (mouseX >= btnX && mouseX <= btnX + btnW
+                        && mouseY >= btnY && mouseY <= btnY + btnH) {
+                    modules.get(i).toggle();
+                    com.hext.config.Config.save();
+                    return true;
+                }
+
+                selectedModule = (selectedModule == modules.get(i)) ? null : modules.get(i);
                 return true;
             }
+        }
+
+        if (selectedModule != null
+                && !(mouseX >= settingsX && mouseX <= settingsX + SETTINGS_W
+                && mouseY >= settingsY && mouseY <= settingsY + getSettingsH())) {
+            selectedModule = null;
         }
 
         return super.mouseClicked(mouseX, mouseY, button);
@@ -155,7 +203,9 @@ public class HextScreen extends Screen {
         if (dragging) {
             panelX = (int) mouseX - dragOffX;
             panelY = (int) mouseY - dragOffY;
-            panelX = Math.max(0, Math.min(width - PANEL_W, panelX));
+            settingsX = panelX + PANEL_W + PADDING;
+            settingsY = panelY;
+            panelX = Math.max(0, Math.min(width - PANEL_W - SETTINGS_W - PADDING, panelX));
             panelY = Math.max(0, Math.min(height - getPanelH(), panelY));
             return true;
         }
