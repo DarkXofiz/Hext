@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Config {
@@ -32,63 +33,81 @@ public class Config {
     }
 
     public static void save() {
-        if (HextClient.modules == null || HextClient.modules.isEmpty()) {
-            System.out.println("[HEXT] Modules listesi boş, config kaydedilemiyor!");
-            return;
-        }
-
         try {
+            // Modules kontrol
+            List<BaseModule> modules = HextClient.modules;
+            if (modules == null || modules.isEmpty()) {
+                System.out.println("[HEXT] Modules listesi boş, config kaydedilemiyor!");
+                return;
+            }
+
             Map<String, Object> data = new HashMap<>();
 
-            HextClient.modules.forEach(m -> {
-                if (m == null || m.name == null) return;
+            // Her module'ü kaydet
+            for (BaseModule m : modules) {
+                if (m == null || m.name == null) {
+                    continue;
+                }
 
                 try {
                     Map<String, Object> moduleData = new HashMap<>();
                     moduleData.put("enabled", m.enabled);
 
                     // Settings'i kaydet
-                    if (m.getSettings() != null) {
-                        Map<String, Object> settings = new HashMap<>();
-                        m.getSettings().forEach(s -> {
-                            if (s != null && s.name != null && s.value != null) {
-                                settings.put(s.name, s.value);
+                    List<?> settings = m.getSettings();
+                    if (settings != null && !settings.isEmpty()) {
+                        Map<String, Object> settingsMap = new HashMap<>();
+                        
+                        for (Object settingObj : settings) {
+                            if (settingObj == null) {
+                                continue;
                             }
-                        });
-                        moduleData.put("settings", settings);
+                            
+                            // ModuleSetting cast
+                            com.hext.modules.ModuleSetting s = (com.hext.modules.ModuleSetting) settingObj;
+                            if (s.name != null && s.value != null) {
+                                settingsMap.put(s.name, s.value);
+                            }
+                        }
+                        
+                        moduleData.put("settings", settingsMap);
                     }
 
                     data.put(m.name, moduleData);
                 } catch (Exception e) {
                     System.err.println("[HEXT] Modül kayıt hatası (" + m.name + "): " + e.getMessage());
                 }
-            });
+            }
 
+            // JSON yazma
             String json = GSON.toJson(data);
             Files.writeString(CONFIG_PATH, json);
-            System.out.println("[HEXT] Config başarıyla kaydedildi: " + CONFIG_PATH);
+            System.out.println("[HEXT] Config başarıyla kaydedildi!");
 
         } catch (IOException e) {
-            System.err.println("[HEXT] Config dosya yazma hatası: " + e.getMessage());
-            e.printStackTrace();
+            System.err.println("[HEXT] Config yazma hatası: " + e.getMessage());
         } catch (Exception e) {
-            System.err.println("[HEXT] Config kayıt genel hatası: " + e.getMessage());
+            System.err.println("[HEXT] Config kayıt hatası: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
     public static void load() {
-        if (!Files.exists(CONFIG_PATH)) {
-            System.out.println("[HEXT] Config dosyası bulunamadı, varsayılan ayarlar kullanılıyor.");
-            return;
-        }
-
-        if (HextClient.modules == null || HextClient.modules.isEmpty()) {
-            System.err.println("[HEXT] Modules listesi boş, config yüklenemedi!");
-            return;
-        }
-
         try {
+            // File kontrolü
+            if (!Files.exists(CONFIG_PATH)) {
+                System.out.println("[HEXT] Config dosyası bulunamadı.");
+                return;
+            }
+
+            // Modules kontrolü
+            List<BaseModule> modules = HextClient.modules;
+            if (modules == null || modules.isEmpty()) {
+                System.err.println("[HEXT] Modules listesi boş!");
+                return;
+            }
+
+            // JSON okuma
             String json = Files.readString(CONFIG_PATH);
             if (json == null || json.trim().isEmpty()) {
                 System.out.println("[HEXT] Config dosyası boş!");
@@ -97,64 +116,84 @@ public class Config {
 
             JsonObject data = GSON.fromJson(json, JsonObject.class);
             if (data == null) {
-                System.err.println("[HEXT] Config JSON parse hatası!");
+                System.err.println("[HEXT] JSON parse hatası!");
                 return;
             }
 
-            HextClient.modules.forEach(m -> {
-                if (m == null || m.name == null) return;
+            // Her module için ayarları yükle
+            for (BaseModule m : modules) {
+                if (m == null || m.name == null) {
+                    continue;
+                }
 
                 try {
-                    if (data.has(m.name)) {
-                        JsonObject moduleData = data.getAsJsonObject(m.name);
+                    if (!data.has(m.name)) {
+                        continue;
+                    }
 
-                        // Enabled durumunu yükle
-                        if (moduleData.has("enabled")) {
-                            m.enabled = moduleData.get("enabled").getAsBoolean();
-                        }
+                    JsonObject moduleData = data.getAsJsonObject(m.name);
+                    if (moduleData == null) {
+                        continue;
+                    }
 
-                        // Settings'i yükle
-                        if (moduleData.has("settings")) {
-                            JsonObject settingsJson = moduleData.getAsJsonObject("settings");
-                            m.getSettings().forEach(s -> {
-                                if (s == null || s.name == null) return;
+                    // Enabled durumunu yükle
+                    if (moduleData.has("enabled")) {
+                        m.enabled = moduleData.get("enabled").getAsBoolean();
+                    }
 
-                                try {
-                                    if (settingsJson.has(s.name)) {
-                                        JsonElement element = settingsJson.get(s.name);
-                                        s.value = parseValue(element, s.value);
-                                    }
-                                } catch (Exception e) {
-                                    System.err.println("[HEXT] Setting yükleme hatası (" + s.name + "): " + e.getMessage());
+                    // Settings'i yükle
+                    if (moduleData.has("settings")) {
+                        JsonObject settingsJson = moduleData.getAsJsonObject("settings");
+                        List<?> settings = m.getSettings();
+                        
+                        if (settings != null && !settings.isEmpty()) {
+                            for (Object settingObj : settings) {
+                                if (settingObj == null) {
+                                    continue;
                                 }
-                            });
+                                
+                                com.hext.modules.ModuleSetting s = (com.hext.modules.ModuleSetting) settingObj;
+                                if (s.name == null) {
+                                    continue;
+                                }
+
+                                if (settingsJson.has(s.name)) {
+                                    JsonElement element = settingsJson.get(s.name);
+                                    s.value = parseValue(element, s.value);
+                                }
+                            }
                         }
                     }
                 } catch (Exception e) {
                     System.err.println("[HEXT] Modül yükleme hatası (" + m.name + "): " + e.getMessage());
                 }
-            });
+            }
 
-            System.out.println("[HEXT] Config başarıyla yüklendi.");
+            System.out.println("[HEXT] Config başarıyla yüklendi!");
 
         } catch (IOException e) {
-            System.err.println("[HEXT] Config dosya okuma hatası: " + e.getMessage());
-            e.printStackTrace();
+            System.err.println("[HEXT] Config okuma hatası: " + e.getMessage());
         } catch (Exception e) {
-            System.err.println("[HEXT] Config yükleme genel hatası: " + e.getMessage());
+            System.err.println("[HEXT] Config yükleme hatası: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
     /**
-     * JSON element'i type'ına göre parse eder
+     * JSON element'i parse eder
      */
     private static Object parseValue(JsonElement element, Object defaultValue) {
+        if (element == null) {
+            return defaultValue;
+        }
+
         try {
             if (element.isJsonPrimitive()) {
                 if (element.getAsJsonPrimitive().isBoolean()) {
                     return element.getAsBoolean();
-                } else if (element.getAsJsonPrimitive().isNumber()) {
+                }
+                
+                if (element.getAsJsonPrimitive().isNumber()) {
                     Number num = element.getAsNumber();
                     if (defaultValue instanceof Double) {
                         return num.doubleValue();
@@ -162,15 +201,20 @@ public class Config {
                         return num.intValue();
                     } else if (defaultValue instanceof Float) {
                         return num.floatValue();
+                    } else if (defaultValue instanceof Long) {
+                        return num.longValue();
                     }
                     return num.doubleValue();
-                } else if (element.getAsJsonPrimitive().isString()) {
+                }
+                
+                if (element.getAsJsonPrimitive().isString()) {
                     return element.getAsString();
                 }
             }
         } catch (Exception e) {
-            System.err.println("[HEXT] Value parse hatası: " + e.getMessage());
+            System.err.println("[HEXT] Parse hatası: " + e.getMessage());
         }
+
         return defaultValue;
     }
 }
