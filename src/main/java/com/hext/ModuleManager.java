@@ -1,3 +1,4 @@
+// 3. ModuleManager.java - Update (Add Hitbox render event)
 package com.hext;
 
 import com.hext.modules.*;
@@ -30,7 +31,7 @@ public class ModuleManager {
         HextClient.modules.add(new ElytraReplace());
         HextClient.modules.add(new ElytraSwap());
 
-        // Her module için keybinding
+        // Keybindings
         HextClient.modules.forEach(m -> {
             if (m != null) {
                 m.keyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
@@ -57,17 +58,13 @@ public class ModuleManager {
             });
         });
 
-        // Render event
+        // Render event - World
         WorldRenderEvents.AFTER_ENTITIES.register(context -> {
             HextClient.modules.forEach(m -> {
                 if (m == null) return;
                 if (m.enabled) {
-                    if (m instanceof Esp) {
-                        ((Esp) m).onRender(context);
-                    }
-                    if (m instanceof Hitbox) {
-                        ((Hitbox) m).onRender(context);
-                    }
+                    if (m instanceof Esp) ((Esp) m).onRender(context);
+                    if (m instanceof Hitbox) ((Hitbox) m).onRender(context);
                 }
             });
         });
@@ -79,14 +76,7 @@ public class ModuleManager {
             int y = 10;
             for (BaseModule m : HextClient.modules) {
                 if (m != null && m.enabled && m.name != null) {
-                    drawContext.drawText(
-                            HextClient.mc.textRenderer, 
-                            "§a" + m.name, 
-                            10, 
-                            y, 
-                            0xFFFFFF, 
-                            true
-                    );
+                    drawContext.drawText(HextClient.mc.textRenderer, "§a" + m.name, 10, y, 0xFFFFFF, true);
                     y += 12;
                 }
             }
