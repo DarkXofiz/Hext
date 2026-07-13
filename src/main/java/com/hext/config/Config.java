@@ -3,9 +3,8 @@ package com.hext.config;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.hext.HextClient;
-import com.hext.modules.BaseModule;
 
-import java.io.*;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
