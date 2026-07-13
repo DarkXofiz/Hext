@@ -13,7 +13,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 public class Config {
     private static final Path CONFIG_PATH = Paths.get("config/hext_config.json");
@@ -34,7 +33,7 @@ public class Config {
 
     public static void save() {
         if (HextClient.modules == null || HextClient.modules.isEmpty()) {
-            System.warn.println("[HEXT] Modules listesi boş, config kaydedilemiyor!");
+            System.out.println("[HEXT] Modules listesi boş, config kaydedilemiyor!");
             return;
         }
 
@@ -92,7 +91,7 @@ public class Config {
         try {
             String json = Files.readString(CONFIG_PATH);
             if (json == null || json.trim().isEmpty()) {
-                System.warn.println("[HEXT] Config dosyası boş!");
+                System.out.println("[HEXT] Config dosyası boş!");
                 return;
             }
 
