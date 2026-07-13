@@ -24,7 +24,7 @@ public class Hitbox extends BaseModule {
         // Nothing to do on tick
     }
 
-    public void onRender(WorldRenderEvents.AfterTranslucentRenderEvent context) {
+    public void onRender(WorldRenderEvents.End context) {
         try {
             MinecraftClient mc = MinecraftClient.getInstance();
             if (mc.world == null || mc.player == null || mc.camera == null) return;
@@ -60,7 +60,7 @@ public class Hitbox extends BaseModule {
         }
     }
 
-    private void drawBox(WorldRenderEvents.AfterTranslucentRenderEvent context, Box box, float r, float g, float b, float a, double camX, double camY, double camZ) {
+    private void drawBox(WorldRenderEvents.End context, Box box, float r, float g, float b, float a, double camX, double camY, double camZ) {
         double x1 = box.minX - camX;
         double y1 = box.minY - camY;
         double z1 = box.minZ - camZ;
@@ -108,4 +108,4 @@ public class Hitbox extends BaseModule {
                 .color(r, g, b, a)
                 .next();
     }
-                 }
+}
