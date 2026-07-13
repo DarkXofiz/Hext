@@ -1,3 +1,4 @@
+// 1. Aura.java - Thunderhack Style
 package com.hext.modules;
 
 import net.minecraft.client.MinecraftClient;
@@ -11,11 +12,18 @@ import java.util.Comparator;
 public class Aura extends BaseModule {
     private int tickCounter = 0;
 
+    public enum TargetMode {
+        CLOSEST, HIGHEST, LOWEST
+    }
+
     public Aura() {
         super("Aura");
-        addSlider("Menzil", 6.0, 1.0, 12.0);
-        addSlider("Gecikme", 2.0, 1.0, 10.0);
-        addBoolean("Takım", false);
+        addSlider("Range", 6.0, 1.0, 20.0);
+        addSlider("Speed", 10.0, 1.0, 20.0);
+        addBoolean("Teamcheck", false);
+        addBoolean("Players", true);
+        addBoolean("Animals", false);
+        addBoolean("Mobs", true);
     }
 
     @Override
@@ -23,28 +31,49 @@ public class Aura extends BaseModule {
         MinecraftClient mc = MinecraftClient.getInstance();
         if (mc.player == null || mc.world == null) return;
 
-        // Ayarları oku (final yapısına al)
-        Double range = getSetting("Menzil");
-        Double delay = getSetting("Gecikme");
-        Boolean teamCheck = getSetting("Takım");
+        // Ayarları oku
+        Double range = getSetting("Range");
+        Double speed = getSetting("Speed");
+        Boolean teamCheck = getSetting("Teamcheck");
+        Boolean players = getSetting("Players");
+        Boolean animals = getSetting("Animals");
+        Boolean mobs = getSetting("Mobs");
 
         if (range == null) range = 6.0;
-        if (delay == null) delay = 2.0;
+        if (speed == null) speed = 10.0;
         if (teamCheck == null) teamCheck = false;
+        if (players == null) players = true;
+        if (animals == null) animals = false;
+        if (mobs == null) mobs = true;
 
-        // Final kopyaları oluştur (lambda için)
+        // Final değerler
         final double finalRange = range;
         final boolean finalTeamCheck = teamCheck;
+        final boolean finalPlayers = players;
+        final boolean finalAnimals = animals;
+        final boolean finalMobs = mobs;
 
-        tickCounter = (tickCounter + 1) % 20;
-        if (tickCounter % (int) Math.max(1, delay) != 0) return;
+        // Speed kontrolü
+        tickCounter++;
+        int speedDelay = (int) (20.0 / speed);
+        if (tickCounter % speedDelay != 0) return;
 
         Box box = mc.player.getBoundingBox().expand(finalRange);
-        Entity target = mc.world.getEntitiesByClass(
+        
+        LivingEntity target = mc.world.getEntitiesByClass(
                 LivingEntity.class, box,
-                e -> e != mc.player 
-                    && e.isAlive() 
-                    && (finalTeamCheck ? !isTeammate(e) : true)
+                e -> {
+                    if (e == mc.player || !e.isAlive()) return false;
+                    if (finalTeamCheck && isTeammate(e)) return false;
+                    
+                    String entityType = e.getClass().getSimpleName();
+                    
+                    if (finalPlayers && entityType.contains("PlayerEntity")) return true;
+                    if (finalMobs && (entityType.contains("Monster") || entityType.contains("Spider"))) return true;
+                    if (finalAnimals && (entityType.contains("Cow") || entityType.contains("Pig"))) return true;
+                    
+                    return false;
+                }
         ).stream()
                 .min(Comparator.comparingDouble(e -> mc.player.distanceTo(e)))
                 .orElse(null);
