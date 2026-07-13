@@ -21,7 +21,6 @@ public class ModuleManager {
     public static ModuleManager getInstance() { return INSTANCE; }
 
     public void init() {
-        // Modülleri ekle
         HextClient.modules.add(new Fly());
         HextClient.modules.add(new Aura());
         HextClient.modules.add(new Trigger());
@@ -31,7 +30,6 @@ public class ModuleManager {
         HextClient.modules.add(new ElytraReplace());
         HextClient.modules.add(new ElytraSwap());
 
-        // Her modül için keybinding kaydet
         HextClient.modules.forEach(m -> m.keyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.hext." + m.name.toLowerCase(),
                 InputUtil.Type.KEYSYM,
@@ -39,7 +37,6 @@ public class ModuleManager {
                 "category.hext"
         )));
 
-        // K tuşu - GUI aç
         openGuiKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.hext.open_gui",
                 InputUtil.Type.KEYSYM,
@@ -47,15 +44,14 @@ public class ModuleManager {
                 "category.hext"
         ));
 
-        // Tick event
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (client.player == null || client.world == null) return;
             HextClient.mc = client;
 
-            // K tuşu - menüyü aç
             while (openGuiKey.wasPressed()) {
                 client.setScreen(new HextScreen());
             }
+
+            if (client.player == null || client.world == null) return;
 
             HextClient.modules.forEach(m -> {
                 while (m.keyBinding.wasPressed()) {
@@ -66,7 +62,6 @@ public class ModuleManager {
             });
         });
 
-        // Dünya render eventi
         WorldRenderEvents.AFTER_ENTITIES.register(context -> {
             HextClient.modules.forEach(m -> {
                 if (m.enabled && m instanceof Esp esp) esp.onRender(context);
@@ -74,10 +69,9 @@ public class ModuleManager {
             });
         });
 
-        // HUD - aktif modülleri sol üstte göster
         HudRenderCallback.EVENT.register((drawContext, tickDelta) -> {
-            if (HextClient.mc.player == null) return;
-            if (HextClient.mc.currentScreen instanceof HextScreen) return; // menü açıkken gösterme
+            if (HextClient.mc == null || HextClient.mc.player == null) return;
+            if (HextClient.mc.currentScreen instanceof HextScreen) return;
             int y = 10;
             for (BaseModule m : HextClient.modules) {
                 if (m.enabled) {
@@ -89,17 +83,12 @@ public class ModuleManager {
     }
 
     public Optional<BaseModule> getModuleByName(String name) {
-        return HextClient.modules.stream()
-                .filter(m -> m.name.equalsIgnoreCase(name))
-                .findFirst();
+        return HextClient.modules.stream().filter(m -> m.name.equalsIgnoreCase(name)).findFirst();
     }
 
     @SuppressWarnings("unchecked")
     public <T extends BaseModule> T getModule(Class<T> clazz) {
-        return (T) HextClient.modules.stream()
-                .filter(clazz::isInstance)
-                .findFirst()
-                .orElse(null);
+        return (T) HextClient.modules.stream().filter(clazz::isInstance).findFirst().orElse(null);
     }
 
     public void enableAll() {
